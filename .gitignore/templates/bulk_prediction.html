@@ -1,0 +1,466 @@
+<!-- bulk_prediction.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Bulk Prediction</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+href="{{ url_for('static', filename='css/bulk_prediction.css') }}">
+
+</head>
+
+<body>
+
+<div class="bulk-container">
+
+    <!-- HEADER -->
+
+    <div class="page-header">
+
+        <div>
+
+            <h1>
+                📂 Bulk Prediction using CSV / Excel
+            </h1>
+
+            <p>
+                Upload a CSV or Excel file to generate predictions for multiple students.
+            </p>
+
+            </div>
+
+            <div class="header-actions">
+
+                <a href="/dashboard" class="back-btn">
+                    ← Back to Dashboard
+                </a>
+
+        </div>
+
+    </div>
+
+    <!-- UPLOAD CARD -->
+
+    <div class="glass-card">
+
+        <h2>
+            Upload CSV or Excel file
+        </h2>
+
+        <!-- DROP AREA -->
+
+            <div class="upload-box" id="dropArea">
+
+                <button
+                    class="remove-btn"
+                    id="removeBtn"
+                    style="display:none;">
+
+                    🗑 Remove File
+
+                </button>
+
+                <input
+                    type="file"
+                    id="fileInput"
+                    hidden
+                    accept=".csv,.xlsx,.xls">
+
+                <div class="upload-content">
+
+                    <div class="success-icon" id="uploadIcon">
+
+                        📂
+
+                    </div>
+
+                    <h3 id="fileName">
+
+                        No file selected
+
+                    </h3>
+
+                    <span
+                        class="success-text"
+                        id="uploadStatus">
+
+                        Upload CSV or Excel file
+
+                    </span>
+
+                    <p
+                        class="file-meta"
+                        id="fileMeta">
+
+                        Supported:
+                        .csv .xlsx .xls
+
+                    </p>
+
+                    <button
+                        class="choose-btn"
+                        id="chooseBtn">
+
+                        Choose File
+
+                    </button>
+
+                </div>
+
+            </div>
+        
+        <div class="upload-action-buttons">
+
+            <button
+            class="view-btn"
+            id="topViewBtn">
+
+                👁 View Predicted Result
+
+            </button>
+
+            <button
+            class="csv-btn"
+            id="topDownloadBtn">
+
+                ⬇ Download Result CSV
+
+            </button>
+
+        </div>
+
+        <div class="result-view-section" id="resultSection">
+
+            <div class="result-header">
+
+                <h2>
+                    📑 Prediction Result
+                </h2>
+
+                <button
+                class="close-result-btn"
+                id="closeResultBtn">
+
+                    ✖ Close
+
+                </button>
+
+            </div>
+
+            <div class="current-file-info">
+
+                <h3 id="currentResultFile">
+
+                    Current File:
+                    student_dataset.csv
+
+                </h3>
+
+                <button
+                class="download-current-btn"
+                id="downloadCurrentBtn">
+
+                    ⬇ Download Current Result
+
+                </button>
+
+            </div>
+
+            <div class="result-table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Student</th>
+                            <th>Predicted Score</th>
+                            <th>Prediction</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="resultTableBody">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        
+        <!-- INFO GRID -->
+
+        <div class="info-grid">
+
+            <!-- IMPORTANT NOTES -->
+
+            <div class="info-card">
+
+                <h3>
+                 Important Notes
+                </h3>
+
+                <ul>
+
+                    <li>✔ Ensure the file includes required columns.</li>
+
+                    <li>✔ Maximum file size: 200MB</li>
+
+                    <li>✔ Supported formats: CSV, XLSX</li>
+
+                    <li>✔ Upload clean and valid student data.</li>
+
+                    <li>✔ Avoid empty rows and duplicate records.</li>
+
+                </ul>
+
+            </div>
+
+            <!-- TEMPLATE -->
+
+            <div class="info-card">
+
+                <h3>
+                    ⬇ Download Template
+                </h3>
+
+                <p>
+
+                    Download CSV or Excel template format containing all required student fields.
+
+                </p>
+
+            <div class="template-fields">
+
+            <span>Attendance_Percentage</span>
+
+            <span>Previous_Exam_Marks</span>
+
+            <span>Assignment_Completion</span>
+
+            <span>Lab_Practice_Frequency</span>
+
+            <span>Class_Participation</span>
+
+            <span>Student_Behavior</span>
+
+            </div>
+
+            <p class="template-note">
+
+                Supported formats:
+                .csv and .xlsx only
+
+            </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- SUMMARY -->
+    <div class="summary-grid">
+
+        <!-- TOTAL STUDENTS -->
+
+        <div class="summary-box blue">
+
+            <h4>
+                Total Students
+            </h4>
+
+            <div class="summary-flex">
+
+                <span id="totalStudents">
+                    0
+                </span>
+
+                <div class="summary-icon">
+                    👥
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- TOTAL PASSED -->
+
+        <div class="summary-box green">
+
+            <h4>
+                Total Passed
+            </h4>
+
+            <div class="summary-flex">
+
+                <span id="totalPassed">
+                    0
+                </span>
+
+                <div class="summary-icon">
+                    ✅
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- TOTAL FAILED -->
+
+        <div class="summary-box red">
+
+            <h4>
+                Total Failed
+            </h4>
+
+            <div class="summary-flex">
+
+                <span id="totalFailed">
+                    0
+                </span>
+
+                <div class="summary-icon">
+                    ❌
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- TEACHER DASHBOARD -->
+
+        <div class="summary-box purple">
+
+            <h4>
+                Teacher Dashboard
+            </h4>
+
+            <div class="summary-flex">
+
+                <a href="/teacher_dashboard"
+                class="teacher-btn">
+
+                    Open Dashboard
+
+                </a>
+
+                <div class="summary-icon">
+                    👨‍🏫
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+    
+
+    <!-- RECENT UPLOADS -->
+
+    <div class="glass-card">
+
+        <h2>
+            📄 Recent Uploads
+        </h2>
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>File Name</th>
+                        <th>Uploaded By</th>
+                        <th>Uploaded On</th>
+                        <th>Records</th>
+                        <th>Status</th>
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="recentTableBody">
+
+                    <tr>
+
+                        <td>StudentPerformanceFactors.csv</td>
+
+                        <td>Nikhil Kumar</td>
+
+                        <td>09 May 2026</td>
+
+                        <td>1,250</td>
+
+                        <td>
+
+                            <span class="status">
+                                Completed
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <div class="action-group">
+
+                                <button class="table-btn">
+                                    👁
+                                </button>
+
+                                <button class="table-btn">
+                                    ⬇
+                                </button>
+
+                                <button class="table-btn delete">
+                                    🗑
+                                </button>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <div class="view-upload">
+
+            <button id="viewUploadsBtn">
+                View All Uploads →
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/bulk_prediction.js') }}"></script>
+
+</body>
+</html>

@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+    <title>
+
+        Analytics Dashboard
+
+    </title>
+
+    <link rel="stylesheet"
+    href="{{ url_for('static', filename='css/analytics_dashboard.css') }}">
+
+    <!-- CHART JS -->
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- PDF EXPORT -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+</head>
+
+<body>
+
+<div class="analytics-wrapper"
+id="analyticsPage">
+
+    <!-- ================================================= -->
+    <!-- HEADER -->
+    <!-- ================================================= -->
+
+    <div class="top-bar">
+
+        <!-- LEFT -->
+
+        <div class="header-left">
+
+            <h1>
+
+                📊 Analytics Dashboard
+
+            </h1>
+
+            <p>
+
+                Overview of student prediction analytics
+
+            </p>
+
+        </div>
+
+        <!-- RIGHT -->
+
+         <div class="top-actions">
+
+            <!-- DATE -->
+
+            <div class="date-box">
+
+                📅
+
+                <span id="currentDate"></span>
+
+            </div>
+
+            <!-- TEACHER DASHBOARD -->
+
+            {% if is_teacher %}
+
+            <button class="teacher-btn"
+            onclick="window.location.href='/teacher_dashboard'">
+
+                👨‍🏫 Teacher Dashboard
+
+            </button>
+
+            {% endif %}
+
+            <!-- BACK -->
+
+            <button class="back-btn"
+            onclick="window.location.href='/dashboard'">
+
+                ← Back
+
+            </button>
+
+            <!-- EXPORT -->
+
+            <button class="export-btn"
+            onclick="downloadPDF()">
+
+                ⬇ Export PDF
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- ================================================= -->
+    <!-- STATS -->
+    <!-- ================================================= -->
+
+    <div class="stats-grid">
+
+        <!-- TOTAL -->
+
+        <div class="stat-card blue">
+
+            <h3>
+
+                Total Students
+
+            </h3>
+
+            <h1>
+
+                {{ total_students }}
+
+            </h1>
+
+            <p>
+
+                Live database records
+
+            </p>
+
+        </div>
+
+        <!-- AVG -->
+
+        <div class="stat-card green">
+
+            <h3>
+
+                Average Score
+
+            </h3>
+
+            <h1>
+
+                {{ avg_score }}
+
+            </h1>
+
+            <p>
+
+                AI predicted average
+
+            </p>
+
+        </div>
+
+        <!-- PASS -->
+
+        <div class="stat-card purple">
+
+            <h3>
+
+                Pass Percentage
+
+            </h3>
+
+            <h1>
+
+                {{ pass_percentage }}%
+
+            </h1>
+
+            <p>
+
+                Students passed
+
+            </p>
+
+        </div>
+
+        <!-- FAIL -->
+
+        <div class="stat-card orange">
+
+            <h3>
+
+                Fail Percentage
+
+            </h3>
+
+            <h1>
+
+                {{ fail_percentage }}%
+
+            </h1>
+
+            <p>
+
+                Students at academic risk
+
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- ================================================= -->
+    <!-- CHARTS -->
+    <!-- ================================================= -->
+
+    <div class="charts-grid">
+
+        <!-- SCORE DISTRIBUTION -->
+
+        <div class="chart-card">
+
+            <h2>
+
+                📈 Score Distribution
+
+            </h2>
+
+            <canvas id="scoreChart"></canvas>
+
+        </div>
+
+        <!-- GRADE DISTRIBUTION -->
+
+        <div class="chart-card">
+
+            <h2>
+
+                🎯 Grade Distribution
+
+            </h2>
+
+            <canvas id="gradeChart"></canvas>
+
+        </div>
+
+        <!-- PASS FAIL -->
+
+        <div class="chart-card">
+
+            <h2>
+
+                ✅ Pass vs Fail
+
+            </h2>
+
+            <canvas id="passChart"></canvas>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ===================================================== -->
+<!-- JAVASCRIPT -->
+<!-- ===================================================== -->
+
+<script>
+
+/* ===================================================== */
+/* THEME SYNC */
+/* ===================================================== */
+
+const savedTheme = localStorage.getItem("theme");
+
+if(savedTheme === "light"){
+
+    document.body.classList.add(
+        "light-mode"
+    );
+}
+
+/* ===================================================== */
+/* COLORS */
+/* ===================================================== */
+
+const darkMode = !document.body.classList.contains(
+    'light-mode'
+);
+
+const textColor = darkMode
+? '#ffffff'
+: '#111827';
+
+const gridColor = darkMode
+? 'rgba(255,255,255,0.08)'
+: 'rgba(0,0,0,0.08)';
+
+/* ===================================================== */
+/* LIVE DATE + TIME */
+/* ===================================================== */
+
+function updateDateTime(){
+
+    const now = new Date();
+
+    const formattedDate =
+    now.toLocaleDateString(
+
+        'en-US',
+
+        {
+
+            year:'numeric',
+            month:'long',
+            day:'numeric'
+
+        }
+
+    );
+
+    const formattedTime =
+    now.toLocaleTimeString(
+
+        'en-US',
+
+        {
+
+            hour:'2-digit',
+            minute:'2-digit',
+            second:'2-digit'
+
+        }
+
+    );
+
+    document.getElementById(
+
+        'currentDate'
+
+    ).innerText =
+
+    `${formattedDate} • ${formattedTime}`;
+
+}
+
+updateDateTime();
+
+setInterval(
+
+    updateDateTime,
+
+    1000
+
+);
+
+/* ===================================================== */
+/* FLASK DATA */
+/* ===================================================== */
+
+const gradeData = JSON.parse(
+    '{{ grades | tojson | safe }}'
+);
+
+const scoreData = JSON.parse(
+    '{{ score_ranges | tojson | safe }}'
+);
+
+const passData = [
+
+    Number(
+        '{{ pass_percentage }}'
+    ),
+
+    Number(
+        '{{ fail_percentage }}'
+    )
+
+];
+
+/* ===================================================== */
+/* SCORE HISTOGRAM */
+/* ===================================================== */
+
+new Chart(
+
+    document.getElementById('scoreChart'),
+
+    {
+
+        type:'bar',
+
+        data:{
+
+            labels:[
+
+                '0-20',
+                '20-40',
+                '40-60',
+                '60-80',
+                '80-100'
+
+            ],
+
+            datasets:[{
+
+                label:'Students',
+
+                data: scoreData,
+
+                backgroundColor:[
+
+                    '#60a5fa',
+                    '#34d399',
+                    '#8b5cf6',
+                    '#f59e0b',
+                    '#ef4444'
+
+                ],
+
+                borderRadius:12
+
+            }]
+
+        },
+
+        options:{
+
+            responsive:true,
+
+            maintainAspectRatio:false,
+
+            plugins:{
+
+                legend:{
+
+                    labels:{
+
+                        color:textColor
+
+                    }
+
+                }
+
+            },
+
+            scales:{
+
+                x:{
+
+                    ticks:{
+
+                        color:textColor
+
+                    },
+
+                    grid:{
+
+                        color:gridColor
+
+                    }
+
+                },
+
+                y:{
+
+                    ticks:{
+
+                        color:textColor
+
+                    },
+
+                    grid:{
+
+                        color:gridColor
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+);
+
+/* ===================================================== */
+/* GRADE DISTRIBUTION */
+/* ===================================================== */
+
+new Chart(
+
+    document.getElementById('gradeChart'),
+
+    {
+
+        type:'doughnut',
+
+        data:{
+
+            labels:Object.keys(
+                gradeData
+            ),
+
+            datasets:[{
+
+                data:Object.values(
+                    gradeData
+                ),
+
+                backgroundColor:[
+
+                    '#22c55e',
+                    '#3b82f6',
+                    '#eab308',
+                    '#f97316',
+                    '#ef4444',
+                    '#991b1b'
+
+                ],
+
+                borderWidth:2
+
+            }]
+
+        },
+
+        options:{
+
+            responsive:true,
+
+            maintainAspectRatio:false,
+
+            cutout:'35%',
+
+            plugins:{
+
+                legend:{
+
+                    position:'right',
+
+                    labels:{
+
+                        color:textColor,
+
+                        padding:18,
+
+                        font:{
+                            size:14
+                        },
+
+                        generateLabels(chart){
+
+                            const data =
+                            chart.data;
+
+                            const dataset =
+                            data.datasets[0];
+
+                            const total =
+                            dataset.data.reduce(
+
+                                (a,b)=>a+b,
+
+                                0
+
+                            );
+
+                            return data.labels.map(
+
+                                (label,i)=>{
+
+                                    const value =
+                                    dataset.data[i];
+
+                                    const percentage =
+                                    (
+                                        (value/total)*100
+                                    ).toFixed(1);
+
+                                    return {
+
+                                        text:
+                                        `${label}  ${percentage}%`,
+
+                                        fillStyle:
+                                        dataset.backgroundColor[i],
+
+                                        strokeStyle:
+                                        dataset.backgroundColor[i],
+
+                                        fontColor:textColor,
+
+                                        color:textColor,
+
+                                        hidden:false,
+
+                                        index:i
+
+                                    };
+
+                                }
+
+                            );
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+);
+
+
+/* ===================================================== */
+/* PASS FAIL */
+/* ===================================================== */
+
+const centerTextPlugin = {
+
+    id:'centerText',
+
+    beforeDraw(chart){
+
+        const {
+
+            width,
+            height,
+            ctx
+
+        } = chart;
+
+        ctx.restore();
+
+        const dataset =
+        chart.data.datasets[0].data;
+
+        const pass =
+        dataset[0];
+
+        const fail =
+        dataset[1];
+
+        const majority =
+        pass > fail
+        ? pass
+        : fail;
+
+        const label =
+        pass > fail
+        ? 'Pass'
+        : 'Fail';
+
+        /* PERCENTAGE */
+
+        ctx.font =
+        'bold 32px Poppins';
+
+        ctx.fillStyle =
+        textColor;
+
+        ctx.textAlign =
+        'center';
+
+        ctx.textBaseline =
+        'middle';
+
+        ctx.fillText(
+
+            `${majority.toFixed(1)}%`,
+
+            width / 2,
+
+            height / 2 - 10
+
+        );
+
+        /* LABEL */
+
+        ctx.font =
+        '18px Poppins';
+
+        ctx.fillStyle =
+        darkMode
+        ? '#94a3b8'
+        : '#6b7280';
+
+        ctx.fillText(
+
+            label,
+
+            width / 2,
+
+            height / 2 + 28
+
+        );
+
+        ctx.save();
+
+    }
+
+};
+
+new Chart(
+
+    document.getElementById('passChart'),
+
+    {
+
+        type:'doughnut',
+
+        data:{
+
+            labels:[
+
+                'Pass',
+                'Fail'
+
+            ],
+
+            datasets:[{
+
+                data: passData,
+
+                backgroundColor:[
+
+                    '#22c55e',
+                    '#ef4444'
+
+                ],
+
+                borderWidth:2
+
+            }]
+
+        },
+
+        options:{
+
+            responsive:true,
+
+            maintainAspectRatio:false,
+
+            cutout:'55%',
+
+            plugins:{
+
+                legend:{
+
+                    position:'right',
+
+                    labels:{
+
+                        color:textColor,
+
+                        padding:18,
+
+                        font:{
+                            size:14
+                        }
+
+                    }
+
+                }
+
+            }
+
+        },
+
+        plugins:[
+
+            centerTextPlugin
+
+        ]
+
+    }
+
+);
+
+/* ===================================================== */
+/* PDF EXPORT */
+/* ===================================================== */
+
+function downloadPDF(){
+
+    const element =
+    document.getElementById(
+        'analyticsPage'
+    );
+
+    html2pdf()
+
+    .set({
+
+        margin:0.5,
+
+        filename:'Analytics_Report.pdf',
+
+        image:{
+            type:'jpeg',
+            quality:1
+        },
+
+        html2canvas:{
+            scale:2
+        },
+
+        jsPDF:{
+            unit:'in',
+            format:'a3',
+            orientation:'landscape'
+        }
+
+    })
+
+    .from(element)
+
+    .save();
+
+}
+
+</script>
+
+</body>
+</html>

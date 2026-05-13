@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Prediction Result</title>
+
+<link rel="stylesheet"
+href="{{ url_for('static',
+filename='css/prediction_result.css') }}">
+
+<link rel="preconnect"
+href="https://fonts.googleapis.com">
+
+<link rel="preconnect"
+href="https://fonts.gstatic.com"
+crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+<div class="result-wrapper">
+
+    <!-- HEADER -->
+
+    <div class="top-header">
+
+        <div>
+
+            <h1>
+
+                Prediction Result
+
+            </h1>
+
+            <p>
+
+                Here is your academic
+                performance prediction
+                and recommendations.
+
+            </p>
+
+        </div>
+
+        <a href="/dashboard"
+        class="back-btn">
+
+            ← Back Dashboard
+
+        </a>
+
+    </div>
+
+    <!-- TOP CARDS -->
+
+    <div class="top-cards">
+
+        <!-- SCORE -->
+
+        <div class="result-card blue">
+
+            <h3>Predicted Score</h3>
+
+            <h1>{{ score }}<span>/100</span></h1>
+
+            <p>
+
+                AI Predicted Academic Score
+
+            </p>
+
+        </div>
+
+        <!-- RESULT -->
+
+        <div class="result-card green">
+
+            <h3>Result</h3>
+
+            <h1>{{ result }}</h1>
+
+            <p>
+
+                Student Final Status
+
+            </p>
+
+        </div>
+
+        <!-- GRADE -->
+
+        <div class="result-card purple">
+
+            <h3>Grade</h3>
+
+            <h1>{{ grade }}</h1>
+
+            <p>
+
+                Academic Grade Prediction
+
+            </p>
+
+        </div>
+
+        <!-- RISK -->
+
+        <div class="result-card orange">
+
+            <h3>Academic Risk</h3>
+
+            <h1>{{ risk }}</h1>
+
+            <p>
+
+                AI Risk Detection
+
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- MAIN GRID -->
+
+    <!-- MAIN GRID -->
+
+<div class="main-grid">
+
+    <!-- LEFT SIDE -->
+
+    <div class="left-section">
+
+        <!-- GRAPH -->
+
+        <div class="graph-card">
+
+            <div class="card-header">
+
+                <h2>
+
+                    📊 Performance Analysis
+
+                </h2>
+
+            </div>
+
+            <canvas id="scoreChart"></canvas>
+
+        </div>
+
+        <!-- SUGGESTIONS -->
+
+        <div class="suggestion-card">
+
+            <div class="card-header">
+
+                <h2>
+
+                    💡 Personalized Suggestions
+
+                </h2>
+
+            </div>
+
+            <div class="tips-grid">
+
+                {% for tip in suggestions %}
+
+                <div class="tip-box">
+
+                    <div class="tip-icon">
+
+                        ✨
+
+                    </div>
+
+                    <div class="tip-content">
+
+                        {{ tip }}
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- RIGHT SIDE -->
+
+    <div class="study-card">
+
+        <div class="card-header">
+
+            <h2>
+
+                📅 Weekly Study Plan
+
+            </h2>
+
+        </div>
+
+        <div class="study-list">
+
+            {% for day, task in weekly_plan.items() %}
+
+            <div class="study-item">
+
+                <span>
+
+                    {{ day }}
+
+                </span>
+
+                <p>
+
+                    {{ task }}
+
+                </p>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+<!-- CHART -->
+
+<script>
+
+const ctx =
+document.getElementById(
+'scoreChart'
+).getContext('2d');
+
+new Chart(ctx, {
+
+    type: 'bar',
+
+    data: {
+
+        labels: [
+
+            'Predicted Score',
+
+            'Attendance',
+
+            'Previous Marks'
+
+        ],
+
+        datasets: [{
+
+            label: 'Performance Analysis',
+
+            data: [
+
+                Number('{{ score }}'),
+
+                Number('{{ attendance }}'),
+
+                Number('{{ previous_score }}')
+
+            ],
+
+            backgroundColor: [
+
+                '#2563eb',
+
+                '#10b981',
+
+                '#8b5cf6'
+
+            ],
+
+            borderRadius: 10,
+
+            borderWidth: 0
+
+        }]
+    },
+
+    options: {
+
+        responsive: true,
+
+        maintainAspectRatio: false,
+
+        plugins: {
+
+            legend: {
+
+                display: false
+            }
+        },
+
+        scales: {
+
+            y: {
+
+                beginAtZero: true,
+
+                max: 100,
+
+                ticks: {
+
+                    color: '#94a3b8'
+                },
+
+                grid: {
+
+                    color: 'rgba(255,255,255,0.05)'
+                }
+            },
+
+            x: {
+
+                ticks: {
+
+                    color: '#94a3b8'
+                },
+
+                grid: {
+
+                    display: false
+                }
+            }
+        }
+    }
+});
+
+    const savedTheme = localStorage.getItem("theme");
+
+        if(savedTheme === "light"){
+
+            document.body.classList.add(
+                "light-mode"
+            );
+        }
+</script>
+
+</body>
+</html>

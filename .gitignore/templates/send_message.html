@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+    <title>Send Message</title>
+
+    <link rel="stylesheet"
+    href="{{ url_for('static',
+    filename='css/send_message.css') }}">
+
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+</head>
+
+<body>
+
+<div class="message-overlay">
+
+    <div class="message-modal">
+
+        <!-- CLOSE -->
+
+        <button class="close-message"
+        onclick="closeMessageModal()">
+
+            <i class="fa-solid fa-xmark"></i>
+
+        </button>
+
+        <!-- HEADER -->
+
+        <div class="message-header">
+
+            <h1>Send a Message</h1>
+
+            <p>
+                We typically reply within a few minutes.
+            </p>
+
+        </div>
+
+        <!-- FORM -->
+
+        <form
+        action="/send_message"
+        method="POST"
+        enctype="multipart/form-data"
+        class="message-form">
+
+            <!-- SUBJECT -->
+
+            <label>
+
+                Subject <span>*</span>
+
+            </label>
+
+            <input
+                type="text"
+                name="subject"
+                placeholder="Enter subject"
+                required
+            >
+
+            <!-- MESSAGE -->
+
+            <label>
+
+                Message <span>*</span>
+
+            </label>
+
+            <textarea
+
+                name="message"
+
+                placeholder="Type your message..."
+
+                required
+
+            ></textarea>
+
+            <!-- FILE -->
+
+            <div class="file-box">
+
+                <div class="file-left">
+
+                    <i class="fa-solid fa-paperclip"></i>
+
+                    <div>
+
+                        <h4>
+                            Attach files (optional)
+                        </h4>
+
+                        <p>
+                            PNG, JPG, PDF upto 5MB
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <label class="file-btn">
+
+                    Choose File
+
+                    <input
+                        type="file"
+                        name="attachment"
+                        id="attachmentInput"
+                        hidden
+                    >
+
+                </label>
+
+            </div>
+
+
+            <!-- UPLOADED FILE PREVIEW -->
+
+            <div class="uploaded-file"
+            id="uploadedFileBox">
+
+                <div class="uploaded-file-left">
+
+                    <i class="fa-solid fa-file"></i>
+
+                    <div>
+
+                        <h4 id="uploadedFileName">
+                            No file selected
+                        </h4>
+
+                        <p id="uploadedFileSize">
+                            Waiting for upload...
+                        </p>
+
+                    </div>
+
+                </div>
+
+            <div class="file-actions">
+
+            <!-- VIEW FILE -->
+
+            <button
+                type="button"
+                class="view-file-btn"
+                onclick="viewSelectedFile()"
+            >
+
+                <i class="fa-solid fa-eye"></i>
+
+            </button>
+
+            <!-- REMOVE FILE -->
+
+            <button
+                type="button"
+                class="remove-file-btn"
+                onclick="removeSelectedFile()"
+            >
+
+                <i class="fa-solid fa-xmark"></i>
+
+            </button>
+
+        </div>
+            </div>
+            <!-- INFO -->
+
+            <div class="message-info">
+
+                <i class="fa-solid fa-circle-info"></i>
+
+                <div>
+
+                    <h4>
+                        We will contact you via email
+                    </h4>
+
+                    <p>
+                        Our team will reply to your registered email address.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <!-- FOOTER -->
+
+            <div class="message-footer">
+
+                <div class="secure-text">
+
+                    <i class="fa-solid fa-lock"></i>
+
+                    Your message is secure and private.
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="send-message-btn"
+                >
+
+                    <i class="fa-regular fa-paper-plane"></i>
+
+                    Send Message
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+
+    // ======================================
+// CLOSE MODAL
+// ======================================
+
+function closeMessageModal(){
+
+    window.location.href = "/help_support";
+}
+
+// ======================================
+// THEME SYNC
+// ======================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function(){
+
+        const savedTheme =
+        localStorage.getItem("theme");
+
+        if(savedTheme === "light"){
+
+            document.body.classList.add(
+                "light-mode"
+            );
+        }
+    }
+);
+
+
+// ======================================
+// FILE PREVIEW
+// ======================================
+
+const attachmentInput =
+document.getElementById(
+    "attachmentInput"
+);
+
+const uploadedFileBox =
+document.getElementById(
+    "uploadedFileBox"
+);
+
+const uploadedFileName =
+document.getElementById(
+    "uploadedFileName"
+);
+
+const uploadedFileSize =
+document.getElementById(
+    "uploadedFileSize"
+);
+
+// HIDE INITIALLY
+
+uploadedFileBox.style.display = "none";
+
+// FILE CHANGE
+
+attachmentInput.addEventListener(
+    "change",
+    function(){
+
+        const file = this.files[0];
+
+        if(file){
+
+            uploadedFileBox.style.display =
+            "flex";
+
+            uploadedFileName.innerText =
+            file.name;
+
+            const sizeKB =
+            (file.size / 1024).toFixed(1);
+
+            uploadedFileSize.innerText =
+            sizeKB + " KB";
+        }
+    }
+);
+
+// REMOVE FILE
+
+function removeSelectedFile(){
+
+    attachmentInput.value = "";
+
+    uploadedFileBox.style.display =
+    "none";
+}
+
+// ======================================
+// VIEW FILE
+// ======================================
+
+function viewSelectedFile(){
+
+    const file =
+    attachmentInput.files[0];
+
+    if(file){
+
+        const fileURL =
+        URL.createObjectURL(file);
+
+        window.open(fileURL, "_blank");
+    }
+}
+</script>
+</body>
+</html>
