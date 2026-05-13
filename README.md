@@ -278,15 +278,7 @@ Features:
 # ⚡ Install Required Libraries
 
 ```bash
-pip install flask
-pip install pandas
-pip install numpy
-pip install scikit-learn
-pip install matplotlib
-pip install openpyxl
-pip install joblib
-pip install flask-mail
-pip install xgboost
+pip install flask pandas numpy scikit-learn matplotlib openpyxl joblib flask-mail xgboost
 ```
 
 ---
