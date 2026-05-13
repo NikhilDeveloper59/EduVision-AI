@@ -1,10 +1,26 @@
 <h1 align="center">
+
+<img src="https://cdn-icons-png.flaticon.com/512/3135/3135755.png" width="120"/>
+
+<br>
+
 🎓 EduVision AI
+
 </h1>
 
 <h3 align="center">
-AI-Powered Student Performance Prediction & Academic Analytics Platform
+
+🚀 AI-Powered Student Performance Prediction & Academic Analytics Platform
+
 </h3>
+
+<p align="center">
+
+<img src="https://readme-typing-svg.demolab.com?font=Poppins&weight=600&size=24&pause=1000&color=3B82F6&center=true&vCenter=true&width=900&lines=AI-Powered+Academic+Analytics+Platform;Student+Performance+Prediction+System;Early+Warning+System+using+Machine+Learning;Teacher+%2B+Student+Integrated+Dashboard;Bulk+Prediction+%2B+AI+Mentor+Platform" />
+
+</p>
+
+---
 
 <p align="center">
 
@@ -22,51 +38,51 @@ AI-Powered Student Performance Prediction & Academic Analytics Platform
 
 <img src="https://img.shields.io/badge/UI-Dark%20%2F%20Light%20Mode-cyan?style=for-the-badge"/>
 
+<img src="https://img.shields.io/badge/Authentication-OTP%20Verification-yellow?style=for-the-badge"/>
+
+<img src="https://img.shields.io/badge/Analytics-RealTime-success?style=for-the-badge"/>
+
 </p>
 
 ---
 
-# 📌 Project Overview
+# 🌟 About EduVision AI
 
-EduVision AI is a complete AI-driven academic analytics platform designed to help both **students** and **teachers** monitor, predict, and improve academic performance using Machine Learning.
+EduVision AI is an advanced AI-driven academic analytics platform developed to help both students and teachers monitor, analyze, and improve academic performance using Machine Learning.
 
-The system predicts:
+The system intelligently predicts:
 
-✅ Student Final Score  
+✅ Final Academic Score  
 ✅ Pass / Fail Status  
-✅ Academic Grade  
-✅ Risk Level Detection  
+✅ Grade Classification  
+✅ Academic Risk Level  
 ✅ Personalized AI Suggestions  
 
 It also provides:
 
-📊 Advanced Analytics Dashboard  
-📂 Bulk CSV/Excel Prediction System  
-👨‍🏫 Teacher Monitoring Dashboard  
+📊 Interactive Analytics Dashboard  
 🤖 AI Academic Mentor  
+📂 Bulk CSV/Excel Prediction  
+👨‍🏫 Teacher Monitoring Dashboard  
 📈 Model Performance Visualization  
-📧 Email & Support System  
-🌙 Modern Dark/Light Responsive UI  
+📧 OTP Authentication & Email System  
+🌙 Responsive Dark / Light UI  
 
 ---
 
-# 🚀 Key Highlights
+# 🚀 Core Features
 
 ## 🎯 Student Features
 
-- AI-based academic score prediction
-- Pass / Fail detection
-- Grade prediction
-- Personalized academic guidance
-- AI mentor suggestions based on:
-  - Branch
-  - Stream
-  - Semester
-  - Education type
-- Risk analysis & performance monitoring
-- Weekly study plan generation
-- Academic analytics dashboard
-- Profile management system
+✅ AI-based Academic Score Prediction  
+✅ Personalized AI Mentor Guidance  
+✅ Subject-Specific Recommendations  
+✅ Pass / Fail Prediction  
+✅ Grade Classification  
+✅ Weekly Study Planning  
+✅ Risk Detection System  
+✅ Academic Analytics Dashboard  
+✅ Profile Management  
 
 ---
 
@@ -79,67 +95,56 @@ Teachers can upload:
 - CSV Files
 - Excel Files
 
-to predict performance for hundreds of students simultaneously.
+to predict performance for hundreds of students instantly.
+
+---
 
 ### 📊 Teacher Dashboard
 
-- Total students analysis
-- Pass percentage
-- Failed student tracking
-- Weakest student detection
-- Academic alerts
-- Performance summary
+Features include:
 
-### 📈 Analytics Dashboard
-
-Visualize:
-
-- Grade Distribution
-- Pass vs Fail Ratio
-- Score Distribution
-- AI Performance Metrics
-- Model Comparison Charts
+✅ Total Student Analytics  
+✅ Pass Percentage Tracking  
+✅ Failed Student Monitoring  
+✅ Weak Student Detection  
+✅ Academic Alert System  
+✅ Real-Time Prediction Reports  
 
 ---
 
-# 🤖 AI Academic Mentor
+## 🤖 AI Academic Mentor
 
-The system contains an intelligent AI mentor module that generates personalized guidance based on:
+The AI mentor generates personalized recommendations using:
 
-- Student branch
-- Academic stream
 - Attendance
-- Assignment completion
 - Study consistency
-- Class participation
-- Sleep hours
-- Previous performance
+- Assignment completion
+- Branch/Stream
+- Academic weakness
+- Previous marks
+- Student behavior
 
-Example:
+### 💻 Example for CSE Students
 
-### For CSE Students
+- Revise DBMS queries
+- Practice DSA daily
+- Improve OS concepts
+- Solve coding problems regularly
 
-- Focus on DSA problem solving
-- Revise DBMS normalization
-- Practice Operating System concepts
-- Improve coding consistency
+### 🧬 Example for PCB Students
 
-### For PCB Students
-
-- Focus on Biology diagrams
-- Revise Organic Chemistry reactions
+- Practice Biology diagrams
+- Revise Organic Chemistry
 - Improve Physics numericals
 
-### For Commerce Students
+### 💼 Example for Commerce Students
 
-- Practice Accountancy journal entries
-- Improve Business Studies revision
+- Practice journal entries
+- Revise Business Studies concepts
 
 ---
 
-# 🧠 Machine Learning Architecture
-
-EduVision AI uses multiple Machine Learning models for different prediction tasks.
+# 🧠 Machine Learning Models
 
 | Model | Purpose |
 |------|------|
@@ -151,7 +156,7 @@ EduVision AI uses multiple Machine Learning models for different prediction task
 
 # 📊 Model Performance
 
-| Metric | Performance |
+| Metric | Score |
 |------|------|
 | Regression R² Score | 0.974 |
 | Pass/Fail Accuracy | 97.67% |
@@ -162,9 +167,9 @@ EduVision AI uses multiple Machine Learning models for different prediction task
 
 # 📂 Input Features Used
 
-The prediction system analyzes multiple academic and behavioral factors:
+The prediction system analyzes multiple academic and behavioral features.
 
-| Feature |
+| Features |
 |------|
 | Study Hours |
 | Attendance |
@@ -181,60 +186,56 @@ The prediction system analyzes multiple academic and behavioral factors:
 
 ---
 
-# 📸 System Modules
+# 📸 Major Modules
 
-## 🔹 Authentication System
+## 🔐 Authentication System
 
 - Student Login/Register
 - Teacher Login/Register
-- Forgot Password with OTP
+- OTP Password Reset
 - Email Verification
 
 ---
 
-## 🔹 Student Dashboard
-
-- Prediction form
-- Personalized AI mentor
-- Prediction result page
-- Academic risk analysis
-- Motivation & guidance
-
----
-
-## 🔹 Bulk Prediction Module
-
-- CSV Upload
-- Excel Upload
-- Real-time prediction generation
-- Download prediction reports
-- Recent upload tracking
-
----
-
-## 🔹 Analytics Dashboard
+## 📊 Analytics Dashboard
 
 Interactive charts for:
 
-- Score distribution
-- Grade distribution
-- Pass vs fail analysis
-- AI prediction analytics
+✅ Grade Distribution  
+✅ Pass vs Fail Ratio  
+✅ Score Distribution  
+✅ AI Prediction Analytics  
+✅ Model Comparison  
 
 ---
 
-## 🔹 Teacher Dashboard
+## 📂 Bulk Prediction Module
 
-- Bulk result tracking
-- Weak student monitoring
-- Failed student detection
-- Record management
+Features:
+
+✅ CSV Upload  
+✅ Excel Upload  
+✅ Download Prediction Reports  
+✅ Recent Upload Tracking  
+✅ Auto Result Visualization  
 
 ---
 
-# 🛠️ Technologies Used
+## 👨‍🏫 Teacher Dashboard
 
-## 💻 Backend
+Features:
+
+✅ Weak Student Monitoring  
+✅ Bulk Prediction Records  
+✅ Failed Student Detection  
+✅ Academic Alerts  
+✅ Record Management  
+
+---
+
+# 🛠️ Tech Stack Used
+
+# 💻 Backend
 
 - Python
 - Flask
@@ -244,7 +245,7 @@ Interactive charts for:
 
 ---
 
-## 🤖 Machine Learning
+# 🤖 Machine Learning
 
 - Scikit-learn
 - Random Forest
@@ -255,7 +256,7 @@ Interactive charts for:
 
 ---
 
-## 🎨 Frontend
+# 🎨 Frontend
 
 - HTML5
 - CSS3
@@ -265,12 +266,128 @@ Interactive charts for:
 
 ---
 
-## 📧 Additional Integrations
+# 📧 Integrations
 
 - Flask-Mail
 - OTP Authentication
 - File Upload System
 - PDF/CSV Export
+
+---
+
+# ⚡ Install Required Libraries
+
+```bash
+pip install flask
+pip install pandas
+pip install numpy
+pip install scikit-learn
+pip install matplotlib
+pip install openpyxl
+pip install joblib
+pip install flask-mail
+pip install xgboost
+```
+
+---
+
+# ▶️ Run Project
+
+## 1️⃣ Train Machine Learning Models
+
+```bash
+python train_model.py
+```
+
+---
+
+## 2️⃣ Run Flask Application
+
+```bash
+python app.py
+```
+
+---
+
+# 🌐 Open in Browser
+
+```bash
+http://127.0.0.1:5000
+```
+
+---
+
+# 📊 Advanced Functionalities
+
+# ✅ Early Warning System
+
+Automatically detects:
+
+- High academic risk
+- Weak performance trends
+- Low attendance impact
+- Poor assignment completion
+
+---
+
+# ✅ Personalized Recommendations
+
+The platform generates recommendations based on:
+
+- Branch
+- Semester
+- Stream
+- Education type
+- Academic weakness
+
+---
+
+# ✅ Bulk Academic Intelligence
+
+Teachers can:
+
+- Upload 100+ student records
+- Predict results instantly
+- Download reports
+- Monitor weak students
+
+---
+
+# 🔒 Security Features
+
+✅ OTP-based password reset  
+✅ Session authentication  
+✅ Role-based access control  
+✅ Teacher/Student authorization  
+
+---
+
+# 📈 Real-World Use Cases
+
+✅ Schools  
+✅ Colleges  
+✅ Coaching Institutes  
+✅ Academic Analytics Platforms  
+✅ Student Monitoring Systems  
+✅ AI-based Education Platforms  
+
+---
+
+# 🧪 Dataset & Training
+
+The project implements:
+
+✅ Feature Engineering  
+✅ Label Encoding  
+✅ Data Cleaning  
+✅ Risk Calculation  
+✅ Multi-Model Training  
+
+Implemented inside:
+
+```bash
+train_model.py
+```
 
 ---
 
@@ -312,3 +429,31 @@ EduVision-AI/
 ├── students.db
 │
 └── README.md
+```
+
+---
+
+# 👨‍💻 Developed By
+
+## Nikhil Kumar
+
+🚀 AI/ML Developer  
+💻 Full Stack Developer  
+📊 Data Analytics Enthusiast  
+
+---
+
+# ⭐ Support Project
+
+If you like this project:
+
+⭐ Star the repository  
+🍴 Fork the repository  
+📢 Share with others  
+---
+
+<h3 align="center">
+
+✨ Empowering Education with Artificial Intelligence ✨
+
+</h3>
