@@ -275,6 +275,38 @@ def create_user_table():
     conn.close()
 
 
+
+
+def upgrade_users_table():
+
+    conn = sqlite3.connect("students.db")
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute(
+            "ALTER TABLE users ADD COLUMN employee_id TEXT"
+        )
+    except:
+        pass
+
+    try:
+        cursor.execute(
+            "ALTER TABLE users ADD COLUMN join_date TEXT"
+        )
+    except:
+        pass
+
+    try:
+        cursor.execute(
+            "ALTER TABLE users ADD COLUMN bio TEXT"
+        )
+    except:
+        pass
+
+    conn.commit()
+    conn.close()
+
+
 # ============================================================
 # CREATE USER
 # ============================================================
@@ -422,7 +454,6 @@ def update_password(contact, new_password):
 # ============================================================
 # UPDATE PROFILE
 # ============================================================
-
 def update_profile(data):
 
     conn = sqlite3.connect("students.db")
@@ -431,7 +462,7 @@ def update_profile(data):
 
     cursor.execute("""
 
-    UPDATE users SET
+        UPDATE users SET
 
     full_name=?,
     email=?,
@@ -448,7 +479,7 @@ def update_profile(data):
 
         data["full_name"],
         data["email"],
-        data["phone"],  
+        data["phone"],
         data["department"],
         data["employee_id"],
         data["join_date"],
@@ -458,10 +489,13 @@ def update_profile(data):
 
     ))
 
+    # print("Rows Updated =", cursor.rowcount)
+    # print("EMPLOYEE ID =", data["employee_id"])
+    # print("JOIN DATE =", data["join_date"])
+    # print("BIO =", data["bio"])
+
     conn.commit()
-
     conn.close()
-
 
 # ============================================================
 # GET USER

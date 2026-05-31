@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Profile</title>
+
+<link rel="stylesheet"
+href="{{ url_for('static',
+filename='css/profile.css') }}">
+
+<link rel="preconnect"
+href="https://fonts.googleapis.com">
+
+<link rel="preconnect"
+href="https://fonts.gstatic.com"
+crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+rel="stylesheet">
+
+<link rel="stylesheet"
+href="{{ url_for('static',
+filename='fontawesome/css/all.min.css') }}">
+
+</head>
+
+<body>
+
+<div class="profile-page">
+
+    <!-- HEADER -->
+
+    <div class="profile-header">
+
+        <div>
+
+            <h1>
+
+                My Profile
+
+            </h1>
+
+            <p>
+
+                View and manage your
+                account information
+
+            </p>
+
+        </div>
+
+        <div class="header-right">
+
+            <!-- THEME -->
+
+            <button class="theme-btn"
+            onclick="toggleTheme()">
+
+                <i class="fa-solid fa-moon">  🌙</i>
+
+            </button>
+
+            <!-- BACK -->
+
+            <a href="/dashboard"
+            class="back-btn">
+
+                <i class="fa-solid fa-arrow-left"></i>
+
+                Back Dashboard
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- PROFILE CARD -->
+
+    <div class="profile-card">
+
+        <!-- LEFT -->
+
+        <div class="profile-left">
+
+            {% if user['profile_image'] %}
+
+            <img src="{{ url_for('static',
+            filename='uploads/' + user['profile_image']) }}">
+
+            {% else %}
+
+            <img src="{{ url_for('static',
+            filename='images/user.png') }}">
+
+            {% endif %}
+
+            <h2>
+
+                {{ user['full_name'] }}
+
+            </h2>
+
+            <!-- ROLE -->
+
+            <span>
+
+                {{ user['role'] }}
+
+            </span>
+
+            <!-- ABOUT -->
+
+            {% if user['bio'] %}
+
+            <p>
+
+                {{ user['bio'] }}
+
+            </p>
+
+            {% else %}
+
+            <p>
+
+                Dedicated educator with passion
+                for student success and
+                performance analysis.
+
+            </p>
+
+            {% endif %}
+
+        </div>
+
+        <!-- RIGHT -->
+
+        <div class="profile-right">
+
+            <div class="info-header">
+
+                <h3>
+
+                    Personal Information
+
+                </h3>
+
+                <!-- EDIT -->
+
+                <a href="/edit-profile"
+                class="edit-btn">
+
+                    <i class="fa-regular fa-pen-to-square"></i>
+
+                    Edit Profile
+
+                </a>
+
+            </div>
+
+            <!-- INFO GRID -->
+
+            <div class="info-grid">
+
+                <!-- EMAIL -->
+
+                <div class="info-item">
+
+                    <label>
+
+                        Email Address
+
+                    </label>
+
+                    <p>
+
+                        {{ user['email'] }}
+
+                    </p>
+
+                </div>
+
+                <!-- PHONE -->
+
+                <div class="info-item">
+
+                    <label>
+
+                        Phone Number
+
+                    </label>
+
+                    <p>
+
+                        {% if user['phone'] %}
+
+                            {{ user['phone'] }}
+
+                        {% else %}
+
+                            Not Added
+
+                        {% endif %}
+
+                    </p>
+
+                </div>
+
+                <!-- ROLE -->
+
+                <div class="info-item">
+
+                    <label>
+
+                        Role
+
+                    </label>
+
+                    <p>
+
+                        {{ user['role'] }}
+
+                    </p>
+
+                </div>
+
+                <!-- DEPARTMENT -->
+
+                <div class="info-item">
+
+                    <label>
+
+                        Department
+
+                    </label>
+
+                    <p>
+
+                        {% if user['department'] %}
+
+                            {{ user['department'] }}
+
+                        {% else %}
+
+                            Not Added
+
+                        {% endif %}
+
+                    </p>
+
+                </div>
+
+                <!-- EMPLOYEE -->
+
+                <div class="info-item">
+
+                    <label>
+
+                        Employee ID
+
+                    </label>
+
+                    <p>
+
+                        {% if user['employee_id'] %}
+
+                            {{ user['employee_id'] }}
+
+                        {% else %}
+
+                            Not Added
+
+                        {% endif %}
+
+                    </p>
+
+                </div>
+
+                <!-- DATE -->
+
+                <div class="info-item">
+
+                    <label>
+
+                        Join Date
+
+                    </label>
+
+                    <p>
+
+                        {% if user['join_date'] %}
+
+                            {{ user['join_date'] }}
+
+                        {% else %}
+
+                            Not Added
+
+                        {% endif %}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="{{ url_for('static',
+filename='js/profile.js') }}"></script>
+
+</body>
+</html>

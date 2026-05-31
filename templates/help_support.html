@@ -1,0 +1,427 @@
+<!-- help_support.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Help & Support</title>
+
+<link rel="preconnect"
+href="https://fonts.googleapis.com">
+
+<link rel="preconnect"
+href="https://fonts.gstatic.com"
+crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+rel="stylesheet">
+
+<link rel="stylesheet"
+href="{{ url_for('static',
+filename='css/help_support.css') }}">
+
+</head>
+
+<body>
+
+<div class="help-container">
+
+    <!-- HEADER -->
+
+    <div class="top-header">
+
+        <div class="header-left">
+
+            <div class="help-icon">
+                🎧
+            </div>
+
+            <div>
+
+                <h1>
+                    Help & Support
+                </h1>
+
+                <p>
+                    We're here to help you. Find answers or contact support.
+                </p>
+
+            </div>
+
+        </div>
+
+        <a href="/dashboard"
+        class="back-btn">
+
+            ← Back to Dashboard
+
+        </a>
+
+    </div>
+
+    <!-- SEARCH -->
+
+    <div class="glass-card search-card">
+
+        <div class="search-content">
+
+            <div>
+
+                <h2>
+                    How can we help you?
+                </h2>
+
+                <p>
+                    Search for help articles, FAQs and support topics.
+                </p>
+
+                <div class="search-box">
+
+                    <input type="text"
+                    placeholder="Search for help articles, FAQs...">
+
+                    <button>
+                        🔍
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div class="support-image">
+
+                💬
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- FAQ -->
+
+    <div class="glass-card">
+
+        <div class="faq-header">
+
+            <h2>
+                Frequently Asked Questions
+            </h2>
+
+            <button>
+                View All FAQs →
+            </button>
+
+        </div>
+
+        <div class="faq-container">
+
+            <!-- FAQ ITEM -->
+
+            <div class="faq-item">
+
+                <div class="faq-question">
+
+                    <span>
+                        How do I upload a CSV or Excel file?
+                    </span>
+
+                    <span class="faq-icon">
+                        +
+                    </span>
+
+                </div>
+
+                <div class="faq-answer">
+
+                    Upload your CSV or Excel file using the Bulk Prediction section. Supported formats are CSV and XLSX.
+
+                </div>
+
+            </div>
+
+            <!-- FAQ ITEM -->
+
+            <div class="faq-item">
+
+                <div class="faq-question">
+
+                    <span>
+                        How is prediction accuracy calculated?
+                    </span>
+
+                    <span class="faq-icon">
+                        +
+                    </span>
+
+                </div>
+
+                <div class="faq-answer">
+
+                    Predictions are generated using trained machine learning models based on student academic and behavioral data.
+
+                </div>
+
+            </div>
+
+            <!-- FAQ ITEM -->
+
+            <div class="faq-item">
+
+                <div class="faq-question">
+
+                    <span>
+                        Can I download prediction results?
+                    </span>
+
+                    <span class="faq-icon">
+                        +
+                    </span>
+
+                </div>
+
+                <div class="faq-answer">
+
+                    Yes, after prediction you can download the generated results in CSV format.
+
+                </div>
+
+            </div>
+
+            <!-- FAQ ITEM -->
+
+            <div class="faq-item">
+
+                <div class="faq-question">
+
+                    <span>
+                        Is my uploaded data secure?
+                    </span>
+
+                    <span class="faq-icon">
+                        +
+                    </span>
+
+                </div>
+
+                <div class="faq-answer">
+
+                    Yes, uploaded student data remains secure and private within the system.
+
+                </div>
+
+            </div>
+
+            <!-- FAQ ITEM -->
+
+            <div class="faq-item">
+
+                <div class="faq-question">
+
+                    <span>
+                        What if prediction fails?
+                    </span>
+
+                    <span class="faq-icon">
+                        +
+                    </span>
+
+                </div>
+
+                <div class="faq-answer">
+
+                    Failed predictions usually occur because of missing or invalid values in uploaded files.
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- SUPPORT GRID -->
+
+    <div class="support-grid">
+
+        <!-- CONTACT -->
+
+        <div class="glass-card support-card">
+
+            <h2>
+                Contact Support
+            </h2>
+
+            <p>
+                Our support team is ready to help you.
+            </p>
+
+            <div class="contact-list">
+
+                <div class="contact-item">
+
+                    <div class="contact-icon">
+                        📧
+                    </div>
+
+                    <div>
+
+                        <h4>Email Support</h4>
+
+                        <span>
+                            support@studentprediction.com
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="contact-item">
+
+                    <div class="contact-icon">
+                        📞
+                    </div>
+
+                    <div>
+
+                        <h4>Phone Support</h4>
+
+                        <span>
+                            +91 1234567890
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="contact-item">
+
+                    <div class="contact-icon">
+                        🕘
+                    </div>
+
+                    <div>
+
+                        <h4>Support Hours</h4>
+
+                        <span>
+                            Mon - Sat, 9:00 AM - 6:00 PM
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <a href="/send_message_page"
+            class="primary-btn">
+
+                ✉ Send Message
+
+            </a>
+
+        </div>
+
+        <!-- REPORT -->
+
+        <!-- REPORT -->
+
+        <div class="glass-card support-card">
+
+            <h2>
+                Report an Issue
+            </h2>
+
+            <p>
+                Facing a problem? Let us know.
+            </p>
+
+            <div class="issue-list">
+
+                <div>
+                    ✅ Describe issue clearly
+                </div>
+
+                <div>
+                    ✅ Attach screenshots
+                </div>
+
+                <div>
+                    ✅ Team responds quickly
+                </div>
+
+            </div>
+
+            <!-- FORM START -->
+
+            <form action="/report-issue" method="POST">
+
+                <textarea
+                    name="message"
+                    placeholder="Describe your issue here..."
+                    required
+                ></textarea>
+
+                <button type="submit" class="outline-btn">
+
+                    ⚠ Report Issue
+
+                </button>
+
+            </form>
+
+            <!-- FORM END -->
+
+        </div>
+
+    </div>
+
+    <!-- FEEDBACK -->
+
+    <div class="feedback-card">
+
+        <div class="feedback-left">
+
+            <div class="feedback-icon">
+                🛡
+            </div>
+
+            <div>
+
+                <h3>
+                    Your feedback helps us improve!
+                </h3>
+
+                <p>
+                    Share your suggestions to improve Student Prediction.
+                </p>
+
+            </div>
+
+        </div>
+
+        <a href="/give_feedback"
+        class="feedback-btn">
+
+            <i class="fa-solid fa-message"></i>
+
+            💬  Give Feedback
+
+        </a>
+
+    </div>
+
+</div>
+
+<script src="{{ url_for('static',
+filename='js/help_support.js') }}"></script>
+
+</body>
+</html>

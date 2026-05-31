@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Teacher Dashboard</title>
+
+<link rel="stylesheet"
+href="{{ url_for('static',
+filename='css/teacher_home.css') }}">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link rel="preconnect" href="https://fonts.gstatic.com"crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+rel="stylesheet">
+
+<link rel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<link rel="stylesheet"href="{{ url_for('static',filename='css/notification.css') }}">
+
+<!-- Favicon -->
+<link rel="icon"
+          type="image/png"
+          href="{{ url_for('static', filename='images/favicon.png') }}">
+</head>
+
+<body>
+
+<!-- MOBILE MENU -->
+
+<button class="menu-btn" onclick="toggleSidebar()"> ☰ </button>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar" id="sidebar">
+
+    <div class="logo">
+         <h1>Teacher Portal</h1>
+    </div>
+
+    <ul>
+
+        <li class="active">
+            <a href="/teacher_home">📈 Prediction</a>
+        </li>
+
+        <li>
+            <a href="/bulk_prediction">📄 Bulk Prediction</a>
+        </li>
+
+        <li>
+            <a href="/teacher_dashboard">👨‍🏫Dashboard</a>
+        </li>
+
+        <li>
+            <a href="/analytics">📊 Analytics</a>
+        </li>
+        
+        <li>
+          <a href="/model_performance">🧠 Model Insights</a>
+        </li>
+
+        <li>
+            <a href="/profile">👤 Profile</a>
+        </li>
+
+    </ul>
+
+    <a href="/logout" class="logout-btn"> Logout </a>
+
+</div>
+
+<!-- MAIN -->
+
+<div class="main-content">
+
+    <!-- NAVBAR -->
+
+    <div class="topbar">
+
+        <div>
+
+            <h1>
+
+               Teacher Prediction Panel
+
+            </h1>
+
+            <p>
+
+                Fill all important details
+                for accurate prediction
+
+            </p>
+
+        </div>
+
+    <div class="top-right">
+
+        <!-- =====================================
+        NOTIFICATION
+        ===================================== -->
+
+        <div class="notification-wrapper">
+
+            <!-- BUTTON -->
+
+            <button class="notification-btn"
+            onclick="toggleNotifications()">
+
+                <i class="fa-regular fa-bell"></i>
+
+                <span class="notification-count">
+
+                    {{ unread_count }}
+
+                </span>
+
+            </button>
+
+            <!-- DROPDOWN -->
+            <div class="notification-dropdown"
+            id="notificationDropdown">
+
+                <!-- LEFT PANEL -->
+
+                <div class="notification-left">
+
+                    <!-- HEADER -->
+
+                    <div class="notification-header">
+
+                        <h3>Notifications</h3>
+
+                    </div>
+
+                    <!-- SCROLL AREA -->
+
+                    <div class="notification-scroll">
+
+                        {% for n in notifications %}
+
+                        <div class="notification-item"
+
+                            onclick="toggleReplyPanel(this)"
+
+                            data-id="{{ n['id'] }}"
+
+                            data-user="{{ n['student_username'] }}"
+
+                            data-message="{{ n['message'] }}"
+
+                            data-file="{{ n['attachment'] if n['attachment'] else '' }}"
+
+                            data-time="{{ n['created_at'][:-3] }}"
+
+                            
+                        >
+
+                            <!-- ICON -->
+
+                            <div class="notify-icon
+
+                            {% if n.type == 'issue' %}
+
+                            issue-icon
+
+                            {% elif n.type == 'message' %}
+
+                            email-icon
+
+                            {% elif n.type == 'reply' %}
+
+                            reply-icon
+
+                            {% else %}
+
+                            feedback-icon
+
+                            {% endif %}
+                            ">
+
+                                {% if n['type'] == 'issue' %}
+
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+
+                                {% elif n['type'] == 'feedback' %}
+
+                                <i class="fa-solid fa-comment-dots"></i>
+
+                                {% elif n['type'] == 'message' %}
+
+                                <i class="fa-solid fa-envelope"></i>
+
+                                {% elif n['type'] == 'reply' %}
+
+                                <i class="fa-solid fa-paper-plane"></i>
+
+                                {% else %}
+
+                                <i class="fa-solid fa-bell"></i>
+
+                                {% endif %}
+
+                            </div>
+
+                            <!-- CONTENT -->
+
+                            <div class="notification-content">
+
+                                <div class="notify-time">
+
+                                    {{ n['created_at'][:-3] }}
+
+                                </div>
+
+                                <h4>
+
+                                {% if n['type'] == "message" %}
+
+                                Email Message
+
+                                {% elif n['type'] == "feedback" %}
+
+                                Feedback Message
+
+                                {% elif n['type'] == "issue" %}
+
+                                Report Issue
+
+                                {% elif n['type'] == "reply" %}
+
+                                Reply Message
+
+                                {% else %}
+
+                                Support Message
+
+                                {% endif %}
+
+                                </h4>
+
+                                <p class="notification-preview">
+
+                                <b>{{ n['student_username'] }}</b>
+
+                                :
+
+                                {% if n.message|length > 55 %}
+
+                                    {{ n.message[:55] }}...
+
+                                    <span class="view-more-text">
+                                        View More
+                                    </span>
+
+                                {% else %}
+
+                                    {{ n.message }}
+
+                                {% endif %}
+
+                            </p>
+
+                            </div>
+
+                            <!-- RIGHT -->
+
+                            {% if n['status'] == "Unread" %}
+
+                                <span class="unread-dot"></span>
+
+                                {% else %}
+
+                                <button class="delete-btn"
+                                        onclick="deleteNotification(event, this.dataset.id)"
+                                        data-id="{{ n['id'] }}">
+
+                                    <i class="fa-solid fa-trash"></i>
+
+                                </button>
+
+                            {% endif %}
+
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                </div>
+
+                <!-- RIGHT REPLY PANEL -->
+
+                <div class="reply-panel" id="replyPanel">
+
+                    <!-- CLOSE -->
+
+                    <button class="close-reply"
+
+                    onclick="closeReplyPanel()">
+
+                        <i class="fa-solid fa-xmark"></i>
+
+                    </button>
+
+                    <!-- HEADER -->
+
+                    <h2 class="reply-title" id="replyTitle">
+                        Support Message
+                    </h2>
+
+                    <!-- USER INFO -->
+
+                    <div class="reply-user">
+
+                        <div class="reply-avatar">
+
+                            <i class="fa-solid fa-comment-dots"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h4 id="replyUser">
+
+                                Username
+
+                            </h4>
+
+                            <span id="replyTime">
+
+                                Time
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                   <div class="reply-message-wrapper">
+
+                    <div class="reply-message"
+                    id="replyMessage">
+
+                        Message
+
+                    </div>
+
+                    <!-- FILE PREVIEW -->
+
+                    <div class="reply-file-preview"
+                    id="replyFilePreview">
+
+                        <a href="#"
+                        target="_blank"
+                        id="replyFileLink">
+
+                            <i class="fa-solid fa-paperclip"></i>
+
+                            <span id="replyFileName">
+                                attachment
+                            </span>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+                    <form action="/send-support-reply" method="POST">
+
+                    <!-- HIDDEN USERNAME -->
+
+                    <input
+                        type="hidden"
+                        name="student_username"
+                        id="replyStudentUsername"
+                    >
+
+                    <!-- REPLY TEXTAREA -->
+
+                    <textarea
+
+                        name="reply_message"
+
+                        class="reply-textarea"
+
+                        placeholder="Type your reply..."
+
+                        required
+
+                    ></textarea>
+
+                    <!-- SEND BUTTON -->
+
+                    <button
+                        type="submit"
+                        class="send-reply-btn"
+                    >
+
+                        <i class="fa-regular fa-paper-plane"></i>
+
+                        Send Reply
+
+                    </button>
+
+                </form>
+
+                </div>
+
+            </div>
+            
+
+        </div>
+
+        <!-- =====================================
+        DARK MODE
+        ===================================== -->
+
+        <button class="theme-btn"
+        onclick="toggleTheme()">
+
+            🌙
+
+        </button>
+
+        <!-- =====================================
+        PROFILE
+        ===================================== -->
+
+        <a href="/profile" class="profile-box">
+
+            <img src="{{ url_for('static',
+    filename='uploads/' + user['profile_image']) }}">
+
+            <div>
+
+                <h4>{{ username }}</h4>
+
+                <span>{{ role }}</span>
+
+            </div>
+
+        </a>
+
+    </div>
+
+    </div>
+
+    <!-- FORM -->
+
+    <form method="POST"
+    action="/predict"
+    class="prediction-form">
+
+    <div class="dashboard-grid">
+
+        <!-- ================================================= -->
+        <!-- LEFT SECTION -->
+        <!-- ================================================= -->
+
+        <div class="card">
+
+            <h2>
+
+                📘 Performance Metrics
+
+            </h2>
+
+            <!-- ATTENDANCE -->
+
+            <div class="form-group">
+
+                <label>
+
+                    Attendance Percentage
+
+                    <span class="range-limit">
+
+                        (30% - 100%)
+
+                    </span>
+
+                </label>
+
+                <input type="range"
+                name="attendance"
+                min="30"
+                max="100"
+                value="75"
+                class="slider"
+                oninput="attendanceValue.innerText=this.value + '%'">
+
+                <div class="range-value"
+                id="attendanceValue">
+
+                    75%
+
+                </div>
+
+            </div>
+
+            <!-- PREVIOUS MARKS -->
+
+            <div class="form-group">
+
+                <label>
+
+                    Previous Exam Marks
+
+                    <span class="range-limit">
+
+                        (0 - 100)
+
+                    </span>
+
+                </label>
+
+                <input type="range"
+                name="previous_marks"
+                min="0"
+                max="100"
+                value="60"
+                class="slider"
+                oninput="marksValue.innerText=this.value + '/100'">
+
+                <div class="range-value"
+                id="marksValue">
+
+                    60 / 100
+
+                </div>
+
+            </div>
+
+
+            <!-- ASSIGNMENT -->
+
+            <div class="form-group">
+
+                <label>
+
+                    Assignment Completion
+
+                </label>
+
+                <select name="assignment_completion">
+
+                    <option value="2">
+
+                        Rarely Complete
+
+                    </option>
+
+                    <option value="5">
+
+                        Sometimes Complete
+
+                    </option>
+
+                    <option value="8">
+
+                        Mostly Complete
+
+                    </option>
+
+                    <option value="10">
+
+                        Always Complete
+
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+        <!-- ================================================= -->
+        <!-- RIGHT SECTION -->
+        <!-- ================================================= -->
+
+        <div class="card">
+
+            <h2>
+
+                🌍 Learning Factors
+
+            </h2>
+
+            <!-- Lab Practice Frequency -->
+
+            <div class="form-group">
+
+                <label>
+
+                    Lab Practice Frequency
+
+                </label>
+
+                <select name="lab_timing">
+
+                    <option value="1">
+
+                        Rarely
+
+                    </option>
+
+                    <option value="2">
+
+                        Weekly
+
+                    </option>
+
+                    <option value="3">
+
+                        Regularly
+
+                    </option>
+
+                    <option value="5">
+
+                        Daily
+
+                    </option>
+
+                </select>
+
+            </div>
+
+            <!-- CLASS PARTICIPATION -->
+
+            <div class="form-group">
+
+                <label>
+
+                    Class Participation
+
+                </label>
+
+                <select name="class_participation">
+
+                    <option value="1">
+
+                        Low
+
+                    </option>
+
+                    <option value="2">
+
+                        Medium
+
+                    </option>
+
+                    <option value="3">
+
+                        Active
+
+                    </option>
+
+                </select>
+
+            </div>
+            
+            <!-- CLASS BEHEVIOR  -->
+
+            <div class="form-group">
+
+            <label>
+                Student Behavior in College
+            </label>
+
+            <select name="student_behavior">
+
+                <option value="1">
+                    Poor
+                </option>
+
+                <option value="2">
+                    Average
+                </option>
+
+                <option value="3">
+                    Good
+                </option>
+
+                <option value="4">
+                    Excellent
+                </option>
+
+            </select>
+
+        </div>
+
+        </div>
+
+    </div>
+
+    <!-- ================================================= -->
+    <!-- BUTTONS -->
+    <!-- ================================================= -->
+
+    <div class="bottom-buttons">
+
+        <a href="/logout"
+        class="logout mobile-logout">
+
+            Logout
+
+        </a>
+
+        <button type="submit"
+        class="predict">
+
+            🔮 Predict Performance
+
+        </button>
+
+        <button type="button"
+        class="dashboard-btn"
+        onclick="window.location.href='/analytics'">
+
+            📊 Analytics Dashboard
+
+       </button>
+
+    </div>
+
+</form>
+
+</div>
+
+<script src="{{ url_for('static',
+filename='js/dashboard.js') }}"></script>
+
+<script src="{{ url_for('static',
+filename='js/notification.js') }}"></script>
+
+</body>
+</html>

@@ -13,6 +13,7 @@ from sklearn.metrics import confusion_matrix
 from database import create_support_table
 from database import create_connection
 from ai_mentor import generate_ai_messages
+from database import upgrade_users_table
 import pandas as pd
 create_support_table()
 
@@ -66,6 +67,7 @@ app.secret_key = "student_portal_secret"
 
 import re
 import os
+import json
 
 from werkzeug.utils import secure_filename
 
@@ -165,6 +167,7 @@ create_table()
 
 create_user_table()
 create_bulk_prediction_table()
+upgrade_users_table()
 
 # ============================================================
 # HOME PAGE
@@ -234,10 +237,7 @@ def create_account():
 
     username = request.form["username"]
 
-    # =====================================
     # PASSWORD VALIDATION
-    # =====================================
-
     pattern = r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
 
     if not re.match(pattern, password):
@@ -256,10 +256,7 @@ Password must contain:
 """
         )
 
-    # =====================================
     # CHECK EXISTING USERNAME
-    # =====================================
-
     conn = create_connection()
 
     cursor = conn.cursor()
@@ -286,10 +283,7 @@ Password must contain:
 
         )
 
-    # =====================================
     # CREATE USER
-    # =====================================
-
     create_user(data)
 
     return redirect("/")
@@ -298,8 +292,6 @@ Password must contain:
 # ============================================================
 # LOGIN
 # ============================================================
-
-
 @app.route("/login", methods=["POST"])
 def login_user():
 
@@ -353,6 +345,7 @@ def login_user():
         error="Invalid username or password"
 
     )
+
 # ============================================================
 # DASHBOARD
 # ============================================================
@@ -900,36 +893,22 @@ Student Performance Dashboard
 @app.route("/predict", methods=["POST"])
 def predict():
 
-    # ========================================================
     # LOGIN CHECK
-    # ========================================================
-
     if "user" not in session:
 
         return redirect("/")
 
-    # ========================================================
-    # DEBUG FORM VALUES
-    # ========================================================
+    print("FORM DATA:")
+    print(request.form.to_dict())
 
-    print("\n================ FORM DATA ================")
-
-    print(request.form)
-
-    # ========================================================
     # GET AI PREDICTION
-    # ========================================================
-
     result_data = predict_student(request.form)
 
     print("\n================ PREDICTION ================")
 
     print(result_data)
 
-    # ========================================================
     # SAVE RECORD TO DATABASE
-    # ========================================================
-
     db_data = {
 
         "Study_Hours":
@@ -1033,21 +1012,14 @@ def predict():
         result_data["grade"]
 
     }
-    # ========================================================
-    # SAVE INDIVIDUAL STUDENT RECORD
-    # ========================================================
 
+    # SAVE INDIVIDUAL STUDENT RECORD
     insert_record(db_data)
 
-    # ========================================================
     # AI MENTOR MESSAGES
-    # ========================================================
     user = get_user(session["user"])
 
-    # ========================================================
     # AI MENTOR MESSAGES
-    # ========================================================
-
     ai_messages = generate_ai_messages(
 
         score=result_data["predicted_score"],
@@ -1076,10 +1048,8 @@ def predict():
             )
         ),
 
-        # =========================================
+    
         # REAL USER DATA FROM DATABASE
-        # =========================================
-
         education_type=user["education_type"],
 
         stream=user["stream"],
@@ -1092,46 +1062,40 @@ def predict():
 
         specialization=user["specialization"]
 
-    )
+        )
 
-    # ========================================================
-    # USER DATA
-    # ========================================================
-
+        # USER DATA
     user = get_user(session["user"])
 
-    # ========================================================
-    # RENDER AI RESULT PAGE
-    # ========================================================
-
+        # RENDER AI RESULT PAGE
     return render_template(
 
-        "predict_result_ai.html",
+            "predict_result_ai.html",
 
-        score=result_data["predicted_score"],
+            score=result_data["predicted_score"],
 
-        result=result_data["result"],
+            result=result_data["result"],
 
-        grade=result_data["grade"],
+            grade=result_data["grade"],
 
-        risk=result_data["risk"],
+            risk=result_data["risk"],
 
-        attendance=result_data["attendance"],
+            attendance=result_data["attendance"],
 
-        previous_score=result_data["previous_score"],
+            previous_score=result_data["previous_score"],
 
-        suggestions=result_data["suggestions"],
+            suggestions=result_data["suggestions"],
 
-        weekly_plan=result_data["weekly_plan"],
+            weekly_plan=result_data["weekly_plan"],
 
-        ai_messages=ai_messages,
+            ai_messages=ai_messages,
 
-        username=session["user"],
+            username=session["user"],
 
-        role=session["role"],
+            role=session["role"],
 
-        user=user
-    )
+            user=user
+        )
 
 # ============================================================
 # ANALYTICS DASHBOARD
@@ -1203,10 +1167,8 @@ def analytics_dashboard():
         "F": int(grade_counts.get("F", 0))
     }
 
-    # ========================================================
-    # SCORE DISTRIBUTION
-    # ========================================================
 
+    # SCORE DISTRIBUTION
     bins = [0,20,40,60,80,100]
 
     score_ranges = [0,0,0,0,0]
@@ -1229,20 +1191,16 @@ def analytics_dashboard():
             score_ranges[4] += 1
 
     
-   # ========================================================
+   
     # ROLE BASED VIEW
-    # ========================================================
-
     is_teacher = False
 
     if role == "Teacher":
 
         is_teacher = True
 
-    # ========================================================
+   
     # RENDER TEMPLATE
-    # ========================================================
-
     return render_template(
 
         "analytics_dashboard.html",
@@ -1300,197 +1258,294 @@ import pandas as pd
 # ============================================================
 
 @app.route("/process_bulk_prediction", methods=["POST"])
-
 def process_bulk_prediction():
 
-    if "user" not in session:
+        print("========== API CALLED ==========")
+        if "user" not in session:
 
-        return jsonify({
-
-            "success": False
-
-        })
-
-    file = request.files.get("file")
-
-    if not file:
-
-        return jsonify({
-
-            "success": False,
-
-            "message": "No file uploaded"
-
-        })
-
-    # ========================================================
-    # READ FILE
-    # ========================================================
-
-    filename = file.filename.lower()
-
-    try:
-
-        if filename.endswith(".csv"):
-
-            df = pd.read_csv(file)
-
-        else:
-
-            df = pd.read_excel(file)
-
-    except:
-
-        return jsonify({
-
-            "success": False,
-
-            "message": "Invalid file"
-
-        })
-
-    # ========================================================
-    # REQUIRED FEATURES
-    # ========================================================
-
-    required_columns = [
-
-        "Attendance_Percentage",
-
-        "Previous_Exam_Marks",
-
-        "Assignment_Completion",
-
-        "Lab_Practice_Frequency",
-
-        "Class_Participation",
-
-        "Student_Behavior"
-
-    ]
-
-    # ========================================================
-    # CHECK MISSING COLUMNS
-    # ========================================================
-
-    for col in required_columns:
-
-        if col not in df.columns:
+            print("SESSION NOT FOUND")
 
             return jsonify({
-
                 "success": False,
-
-                "message": f"Missing column: {col}"
-
+                "message": "Login session expired"
             })
 
-    # ========================================================
-    # PREDICTION
-    # ========================================================
+        file = request.files.get("file")
 
-    results = []
+        if not file:
 
-    total_students = len(df)
+            return jsonify({
+                "success": False,
+                "message": "No file uploaded"
+            })
 
-    total_passed = 0
+        # READ FILE
+        filename = file.filename.lower()
 
-    total_failed = 0
+        try:
 
-    for index, row in df.iterrows():
+            if filename.endswith(".csv"):
 
-        form_data = {
+                df = pd.read_csv(file)
 
-            "attendance":
-            row["Attendance_Percentage"],
+            else:
 
-            "previous_marks":
-            row["Previous_Exam_Marks"],
+                df = pd.read_excel(file)
 
-            "assignment_completion":
-            row["Assignment_Completion"],
+        except:
 
-            "lab_timing":
-            row["Lab_Practice_Frequency"],
+            return jsonify({
+                "success": False,
+                "message": "Invalid file"
+            })
 
-            "class_participation":
-            row["Class_Participation"],
+        # REQUIRED COLUMNS
+        required_columns = [
 
-            "student_behavior":
-            row["Student_Behavior"]
-        }
+            "Attendance_Percentage",
+            "Previous_Exam_Marks",
+            "Assignment_Completion",
+            "Lab_Practice_Frequency",
+            "Class_Participation",
+            "Student_Behavior"
 
-        prediction = predict_student(form_data)
+        ]
 
-        if prediction["result"] == "PASS":
+        for col in required_columns:
 
-            total_passed += 1
+            if col not in df.columns:
 
-        else:
+                return jsonify({
 
-            total_failed += 1
+                    "success": False,
 
-        results.append({
+                    "message":
+                    f"Missing column: {col}"
 
-            "student":
-            f"Student {index + 1}",
+                })
 
-            "score":
-            prediction["predicted_score"],
 
-            "prediction":
-            prediction["result"]
+        # BULK PREDICTION
+        results = []
+
+        total_students = len(df)
+
+        total_passed = 0
+
+        total_failed = 0
+
+        
+        for index, row in df.iterrows():
+
+            form_data = {
+
+                "attendance": float(row["Attendance_Percentage"]),
+                "previous_marks": float(row["Previous_Exam_Marks"]),
+                "assignment_completion": float(row["Assignment_Completion"]),
+                "lab_timing": float(row["Lab_Practice_Frequency"]),
+                "class_participation": float(row["Class_Participation"]),
+
+                "study_hours": 6,
+                "sleep_hours": 7,
+                "sports_activity": 3,
+                "explanation_quality": 3,
+                "student_interaction": 2,
+                "lab_facility": 3,
+                "internet_access": 1,
+                "teacher_support": 3,
+                "library_usage": 3,
+                "exam_preparation": 5,
+                "learning_hours": 5,
+                "project_submission": 8
+            }
+
+            prediction = predict_student(form_data)
+
+            if prediction["result"] == "PASS":
+                total_passed += 1
+            else:
+                total_failed += 1
+
+            # SAVE EACH STUDENT
+            results.append({
+
+                "student":f"Student {index + 1}",
+
+                "score":prediction["predicted_score"],
+
+                "prediction":prediction["result"],
+
+                "student_id":index + 1,
+
+                "attendance":float(row["Attendance_Percentage"]),
+
+                "previous_marks":float(row["Previous_Exam_Marks"]),
+
+                "assignment_completion":float(row["Assignment_Completion"]),
+
+                "lab_frequency":float(row["Lab_Practice_Frequency"]),
+
+                "class_participation":float(row["Class_Participation"]),
+
+                "predicted_score":prediction["predicted_score"],
+
+                "result":prediction["result"],
+
+                "grade":prediction["grade"]
+
+            })
+        
+        print("\n========== BULK SAVE ==========")
+        print("TOTAL RESULTS:", len(results))
+        print("FIRST:", results[0])
+        print("LAST:", results[-1])
+
+        # ============================================================
+        # SAVE BULK RESULTS JSON
+        # ============================================================
+
+        json_file = os.path.join(app.root_path,"latest_bulk_results.json")
+
+        with open(json_file,"w") as f:
+            json.dump(results,f,indent=4)
+
+        print(
+            f"Bulk results saved: {json_file}"
+        )
+
+        print(
+            f"Total Students Saved: {len(results)}"
+        )
+
+        # SAVE SUMMARY TO DATABASE
+        insert_bulk_prediction(
+
+            file_name=file.filename,
+
+            uploaded_by=session["user"],
+
+            total_students=total_students,
+
+            total_passed=total_passed,
+
+            total_failed=total_failed
+
+        )
+
+        # RESPONSE
+        return jsonify({
+
+            "success": True,
+
+            "results": results,
+
+            "summary": {
+
+                "total":
+                total_students,
+
+                "passed":
+                total_passed,
+
+                "failed":
+                total_failed
+
+            }
+
         })
 
-    # ========================================================
-    # SAVE BULK RECORD
-    # ========================================================
-
-    insert_bulk_prediction(
-
-        file_name=file.filename,
-
-        uploaded_by=session["user"],
-
-        total_students=total_students,
-
-        total_passed=total_passed,
-
-        total_failed=total_failed
-    )
-
-    # ========================================================
-    # RESPONSE
-    # ========================================================
-
-    return jsonify({
-
-        "success": True,
-
-        "results": results,
-
-        "summary": {
-
-            "total": total_students,
-
-            "passed": total_passed,
-
-            "failed": total_failed
-        }
-    })
 
 # ============================================================
-# DELETE BULK RECORD
+# DELETE SINGLE BULK RECORD
 # ============================================================
 
 @app.route("/delete_bulk/<int:id>")
-
 def delete_bulk(id):
 
-    delete_bulk_prediction(id)
+    try:
 
-    return redirect("/teacher_dashboard")
+        delete_bulk_prediction(id)
 
+        print(f"Bulk Record Deleted: {id}")
+
+    except Exception as e:
+
+        print("Delete Error:", e)
+
+    return redirect(
+        url_for("teacher_dashboard")
+    )
+
+
+# ============================================================
+# DELETE ALL STUDENT RECORDS
+# ============================================================
+
+@app.route("/delete_all_records")
+def delete_all_records():
+
+    try:
+
+        # ==========================================
+        # DELETE DATABASE RECORDS
+        # ==========================================
+
+        conn = sqlite3.connect("students.db")
+
+        cursor = conn.cursor()
+
+        cursor.execute(
+            "DELETE FROM records"
+        )
+
+        cursor.execute(
+            "DELETE FROM bulk_predictions"
+        )
+
+        conn.commit()
+
+        conn.close()
+
+        # ==========================================
+        # DELETE BULK JSON FILE
+        # ==========================================
+
+        json_file = os.path.join(
+            app.root_path,
+            "latest_bulk_results.json"
+        )
+
+        if os.path.exists(json_file):
+
+            os.remove(json_file)
+
+            print(
+                "latest_bulk_results.json deleted"
+            )
+
+        # ==========================================
+        # CLEAR SESSION DATA
+        # ==========================================
+
+        session.pop(
+            "latest_bulk_results",
+            None
+        )
+
+        print(
+            "ALL STUDENT RECORDS DELETED"
+        )
+
+    except Exception as e:
+
+        print(
+            "DELETE ALL ERROR:",
+            e
+        )
+
+    return redirect(
+        url_for("teacher_dashboard")
+    )
 
 
 @app.route("/help_support")
@@ -1528,12 +1583,14 @@ def edit_profile():
 @app.route("/update-profile", methods=["POST"])
 
 def save_profile():
+    print("FORM DATA =", request.form)
+    print("FILES =", request.files)
 
     if "user" not in session:
 
         return redirect("/")
 
-    image = request.files["profile_image"]
+    image = request.files.get("profile_image")
 
     filename = "default.png"
 
@@ -1554,59 +1611,30 @@ def save_profile():
 
         old_user = get_user(session["user"])
 
-        filename = old_user[11]
+        filename = old_user["profile_image"]
 
     data = {
 
-        "role": request.form["role"],
+        "full_name": request.form.get("full_name"),
 
-        "full_name": request.form["full_name"],
+        "username": session["user"],
 
-        "username": request.form["username"],
+        "email": request.form.get("email"),
 
-        "email": request.form["email"],
+        "phone": request.form.get("phone"),
 
-        "password": request.form["password"],
+        "department": request.form.get("department"),
 
-        "dob": request.form.get("dob"),
+        "employee_id": request.form.get("employee_id"),
 
-        "education_type":
-        request.form.get("education_type"),
+        "join_date": request.form.get("join_date"),
 
-        "stream":
-        request.form.get("stream"),
+        "bio": request.form.get("bio"),
 
-        "specialization":
-
-        request.form.get("science_group")
-
-        or
-
-        request.form.get("commerce_focus")
-
-        or
-
-        request.form.get("arts_focus"),
-
-        "board":
-        request.form.get("board"),
-
-        "branch":
-        request.form.get("branch"),
-
-        "semester":
-        request.form.get("semester"),
-
-        "department":
-        request.form.get("department"),
-
-        "school_name":
-        request.form.get("school_name"),
-
-        "phone":
-        request.form.get("phone")
+        "profile_image": filename
     }
 
+    print("PROFILE DATA =", data)
     update_profile(data)
 
     return redirect("/profile")
@@ -1640,13 +1668,9 @@ def forgot_password():
 # ============================================================
 
 @app.route("/teacher_dashboard")
-
 def teacher_dashboard():
 
-    # ========================================================
     # LOGIN CHECK
-    # ========================================================
-
     if "user" not in session:
 
         return redirect("/")
@@ -1655,13 +1679,30 @@ def teacher_dashboard():
     # GET BULK DATA
     # ========================================================
 
-    bulk_data = get_bulk_predictions()
+    json_file = os.path.join(app.root_path,"latest_bulk_results.json")
 
-    # ========================================================
+    if os.path.exists(json_file):
+        try:
+            with open(json_file,"r",encoding="utf-8") as f:
+                bulk_results = json.load(f)
+
+        except Exception as e:
+            print("JSON READ ERROR:", e)
+            bulk_results = []
+
+    else:
+
+        bulk_results = []
+
+
+    print("\n========== DASHBOARD ==========")
+    print("TOTAL RECORDS:", len(bulk_results))
+
+    for x in bulk_results[:5]:
+        print(x)
+
     # EMPTY DATA
-    # ========================================================
-
-    if not bulk_data:
+    if not bulk_results:
 
         return render_template(
 
@@ -1685,155 +1726,151 @@ def teacher_dashboard():
             bulk_data=[]
         )
 
-    # ========================================================
-    # TOTAL SUMMARY
-    # ========================================================
+    # SUMMARY
+    total_students = len(bulk_results)
 
-    total_students = 0
+    total_passed = len(
 
-    total_passed = 0
+        [
 
-    total_failed = 0
+            s
 
-    total_files = len(bulk_data)
+            for s in bulk_results
 
-    for row in bulk_data:
+            if s["result"] == "PASS"
 
-        total_students += row["total_students"]
+        ]
 
-        total_passed += row["total_passed"]
+    )
 
-        total_failed += row["total_failed"]
+    total_failed = len(
 
-    # ========================================================
-    # AVERAGE SCORE ESTIMATION
-    # ========================================================
+        [
 
-    if total_students > 0:
+            s
 
-        avg_score = round(
+            for s in bulk_results
 
-            (total_passed / total_students) * 100,
+            if s["result"] == "FAIL"
 
-            2
+        ]
+
+    )
+
+    # AVERAGE SCORE
+    avg_score = round(
+
+        sum(
+
+            s["predicted_score"]
+
+            for s in bulk_results
+
         )
 
-    else:
+        /
 
-        avg_score = 0
+        total_students,
 
-    # ========================================================
-    # PASS PERCENTAGE
-    # ========================================================
+        2
 
-    if total_students > 0:
+    )
 
-        pass_percentage = round(
+    # PASS %
+    pass_percentage = round(
 
-            (total_passed / total_students) * 100,
+        (
 
-            2
+            total_passed
+
+            /
+
+            total_students
+
         )
 
-    else:
+        * 100,
 
-        pass_percentage = 0
+        2
 
-    # ========================================================
-    # FAILED FILES
-    # ========================================================
+    )
 
+    total_files = 1
+
+    # FAILED STUDENTS
     failed_students = []
 
-    for row in bulk_data:
+    for s in bulk_results:
 
-        if row["total_failed"] > 0:
+        if s["result"] == "FAIL":
 
             failed_students.append({
 
                 "student_id":
-                row["file_name"],
+                s["student_id"],
 
                 "predicted_score":
-                row["total_failed"],
+                s["predicted_score"],
 
                 "grade":
-                "Bulk File",
+                s["grade"],
 
                 "attendance":
-                f"{row['total_passed']} Passed"
+                s["attendance"]
+
             })
 
-    # ========================================================
-    # WEAKEST FILES
-    # ========================================================
 
+    # TOP 10 WEAKEST STUDENTS (SCORE BETWEEN 40-50)
     weakest_students = []
 
-    sorted_bulk = sorted(
+    for s in bulk_results:
 
-        bulk_data,
+        if 40 <= s["predicted_score"] <= 50:
 
-        key=lambda x: x["total_failed"],
+            weakest_students.append({
 
-        reverse=True
+                "student_id":
+                s["student_id"],
 
-    )
+                "predicted_score":
+                s["predicted_score"],
 
-    for row in sorted_bulk[:10]:
+                "attendance":
+                s["attendance"]
 
-        weakest_students.append({
+            })
 
-            "student_id":
-            row["file_name"],
+    weakest_students = sorted(
 
-            "predicted_score":
-            row["total_failed"],
+        weakest_students,
 
-            "attendance":
-            f"{row['total_students']} Students"
-        })
+        key=lambda x: x["predicted_score"]
 
-    # ========================================================
-    # ATTENDANCE STYLE ALERTS
-    # ========================================================
+    )[:10]
 
+
+    # ATTENDANCE ALERTS when (ATTENDANCE < 75)
     attendance_alerts = []
 
-    for row in bulk_data:
+    for s in bulk_results:
 
-        fail_percent = 0
-
-        if row["total_students"] > 0:
-
-            fail_percent = (
-
-                row["total_failed"]
-
-                /
-
-                row["total_students"]
-
-            ) * 100
-
-        if fail_percent >= 50:
+        if s["attendance"] < 75:
 
             attendance_alerts.append({
 
                 "student_id":
-                row["file_name"],
+                s["student_id"],
 
                 "attendance":
-                round(fail_percent, 2),
+                s["attendance"],
 
                 "predicted_score":
-                row["total_failed"]
+                s["predicted_score"]
+
             })
 
-    # ========================================================
     # AI MESSAGE
-    # ========================================================
-
     if pass_percentage > 80:
 
         teacher_message = (
@@ -1861,10 +1898,8 @@ def teacher_dashboard():
 
         )
 
-    # ========================================================
+    
     # RENDER TEMPLATE
-    # ========================================================
-
     return render_template(
 
         "teacher_dashboard.html",
@@ -1883,7 +1918,7 @@ def teacher_dashboard():
 
         teacher_message=teacher_message,
 
-        bulk_data=bulk_data,
+        bulk_data=bulk_results,
 
         total_files=total_files,
 
@@ -1892,44 +1927,6 @@ def teacher_dashboard():
         total_failed=total_failed,
 
         attendance_col="attendance"
-    )
-
-# ============================================================
-# DELETE ALL RECORDS
-# ============================================================
-
-@app.route("/delete_all_records")
-
-def delete_all_records():
-
-    conn = sqlite3.connect("students.db")
-
-    cursor = conn.cursor()
-
-    # DELETE SINGLE STUDENT RECORDS
-
-    cursor.execute("""
-
-    DELETE FROM records
-
-    """)
-
-    # DELETE BULK PREDICTION RECORDS
-
-    cursor.execute("""
-
-    DELETE FROM bulk_predictions
-
-    """)
-
-    conn.commit()
-
-    conn.close()
-
-    return redirect(
-
-        url_for("teacher_dashboard")
-
     )
 
 # ============================================================

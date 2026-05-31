@@ -1,0 +1,31 @@
+{
+    "Regression_R2": 0.9715129311543801,
+    "MAE": 3.9138111111111114,
+    "MSE": 35.39656181481482,
+    "RMSE": 5.949500971914772,
+    "PassFail_Accuracy": 0.9766666666666667,
+    "PassFail_Precision": 0.9746835443037974,
+    "PassFail_Recall": 0.9956896551724138,
+    "PassFail_F1": 0.9850746268656716,
+    "PassFail_CM": [
+        [
+            62,
+            6
+        ],
+        [
+            1,
+            231
+        ]
+    ],
+    "Grade_Accuracy": 0.8,
+    "Grade_Precision": 0.7996640096420798,
+    "Grade_Recall": 0.8,
+    "Grade_F1": 0.7994236382391964,
+    "Grade_Distribution": {
+        "A": 138,
+        "A+": 757,
+        "B": 176,
+        "C": 126,
+        "F": 303
+    }
+}

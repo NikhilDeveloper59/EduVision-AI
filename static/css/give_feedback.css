@@ -1,0 +1,638 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+
+    font-family:Poppins,sans-serif;
+
+    background:#081224;
+}
+
+/* ====================================
+LIGHT MODE FULL FIX
+==================================== */
+
+body.light-mode{
+
+    background:#eef3ff;
+}
+
+body.light-mode .feedback-overlay{
+
+    background:rgba(255,255,255,0.45);
+}
+
+body.light-mode .feedback-modal{
+
+    background:white;
+
+    border:1px solid #dbe4ff;
+}
+
+body.light-mode .feedback-header h1{
+
+    color:#111827;
+}
+
+body.light-mode .feedback-header p{
+
+    color:#4b5563;
+}
+
+body.light-mode .feedback-card{
+
+    background:#f4f7ff;
+
+    border:1px solid #dbe4ff;
+}
+
+body.light-mode .feedback-card.active{
+
+    background:#e8f0ff;
+
+    border-color:#2563eb;
+}
+
+body.light-mode .feedback-card h3{
+
+    color:#111827;
+}
+
+body.light-mode .feedback-card p{
+
+    color:#4b5563;
+}
+
+body.light-mode .feedback-form label{
+
+    color:#111827;
+}
+
+body.light-mode .feedback-form textarea{
+
+    background:#f4f7ff;
+
+    color:#111827;
+
+    border:1px solid #dbe4ff;
+}
+
+body.light-mode .feedback-form textarea::placeholder{
+
+    color:#6b7280;
+}
+
+body.light-mode .feedback-note{
+
+    color:#4b5563;
+}
+
+body.light-mode .cancel-btn{
+
+    background:#edf2ff;
+
+    color:#111827;
+}
+
+body.light-mode .close-feedback{
+
+    background:#edf2ff;
+
+    color:#111827;
+}
+
+/* ====================================
+OVERLAY
+==================================== */
+
+.feedback-overlay{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,0.55);
+
+    backdrop-filter:blur(8px);
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    z-index:99999;
+
+    padding:20px;
+}
+
+/* ====================================
+MODAL
+==================================== */
+.feedback-modal{
+
+    width:min(90vw,900px);
+
+    min-height:720px;
+
+    background:linear-gradient(
+        135deg,
+        #09152d,
+        #0f1f46
+    );
+
+    border-radius:32px;
+
+    border:1px solid rgba(255,255,255,0.08);
+
+    padding:40px;
+
+    position:relative;
+
+    box-shadow:
+    0 25px 80px rgba(0,0,0,0.5);
+
+    animation:modalFade 0.3s ease;
+}
+
+/* ====================================
+HEADER
+==================================== */
+
+.feedback-header{
+
+    text-align:center;
+
+    margin-bottom:35px;
+}
+
+.feedback-header h1{
+
+    color:white;
+
+    font-size:42px;
+
+    margin-bottom:12px;
+
+    font-weight:700;
+}
+
+.feedback-header p{
+
+    color:#b8c6ef;
+
+    font-size:17px;
+}
+
+/* ====================================
+CLOSE
+==================================== */
+
+.close-feedback{
+
+    position:absolute;
+
+    top:22px;
+
+    right:22px;
+
+    width:52px;
+
+    height:52px;
+
+    border:none;
+
+    border-radius:18px;
+
+    background:rgba(255,255,255,0.06);
+
+    color:white;
+
+    cursor:pointer;
+
+    font-size:20px;
+
+    transition:0.3s;
+}
+
+.close-feedback:hover{
+
+    background:#2563eb;
+
+    transform:rotate(90deg);
+}
+
+/* ====================================
+TYPE GRID
+==================================== */
+
+.feedback-types{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(180px,1fr));
+
+    gap:18px;
+
+    margin-bottom:35px;
+}
+
+.feedback-card{
+
+    background:rgba(255,255,255,0.04);
+
+    border:2px solid transparent;
+
+    border-radius:24px;
+
+    padding:28px 22px;
+
+    cursor:pointer;
+
+    transition:0.3s;
+
+    text-align:center;
+}
+
+.feedback-card:hover{
+
+    transform:translateY(-6px);
+
+    border-color:#2563eb;
+
+    box-shadow:
+    0 15px 35px rgba(37,99,235,0.25);
+}
+
+.feedback-card.active{
+
+    border-color:#2563eb;
+
+    background:rgba(37,99,235,0.12);
+}
+
+.feedback-card i{
+
+    font-size:34px;
+
+    color:#7ca5ff;
+
+    margin-bottom:18px;
+}
+
+.feedback-card h3{
+
+    color:white;
+
+    margin-bottom:10px;
+
+    font-size:22px;
+}
+
+.feedback-card p{
+
+    color:#b9c6ea;
+
+    line-height:1.5;
+
+    font-size:14px;
+}
+
+/* ====================================
+FORM
+==================================== */
+
+.feedback-form label{
+
+    display:block;
+
+    color:white;
+
+    font-size:18px;
+
+    margin-bottom:14px;
+
+    font-weight:600;
+}
+
+.feedback-form textarea{
+
+    width:100%;
+
+    min-height:220px;
+
+    border:none;
+
+    outline:none;
+
+    resize:none;
+
+    border-radius:24px;
+
+    padding:24px;
+
+    background:rgba(255,255,255,0.05);
+
+    color:white;
+
+    font-size:16px;
+
+    border:1px solid rgba(255,255,255,0.08);
+
+    transition:0.3s;
+}
+
+.feedback-form textarea:focus{
+
+    border-color:#2563eb;
+
+    box-shadow:
+    0 0 0 4px rgba(37,99,235,0.18);
+}
+
+.feedback-form textarea::placeholder{
+
+    color:#93a6db;
+}
+
+/* ====================================
+FOOTER
+==================================== */
+
+.feedback-footer{
+
+    margin-top:28px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:20px;
+
+    flex-wrap:wrap;
+}
+
+.feedback-note{
+
+    color:#c5d4ff;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    font-size:15px;
+}
+
+.feedback-actions{
+
+    display:flex;
+
+    gap:14px;
+}
+
+.cancel-btn{
+
+    height:54px;
+
+    padding:0 28px;
+
+    border:none;
+
+    border-radius:16px;
+
+    background:rgba(255,255,255,0.08);
+
+    color:white;
+
+    cursor:pointer;
+
+    font-size:15px;
+
+    transition:0.3s;
+}
+
+.cancel-btn:hover{
+
+    background:rgba(255,255,255,0.15);
+}
+
+.submit-btn{
+
+    height:54px;
+
+    padding:0 32px;
+
+    border:none;
+
+    border-radius:16px;
+
+    background:#2563eb;
+
+    color:white;
+
+    font-size:15px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:0.3s;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+}
+
+.submit-btn:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:
+    0 15px 35px rgba(37,99,235,0.35);
+}
+
+/* ====================================
+LIGHT MODE
+==================================== */
+
+body.light-mode{
+
+    background:#eef3ff;
+}
+
+body.light-mode .feedback-modal{
+
+    background:white;
+}
+
+body.light-mode .feedback-header h1{
+
+    color:#111827;
+}
+
+body.light-mode .feedback-header p{
+
+    color:#5d6475;
+}
+
+body.light-mode .feedback-card{
+
+    background:#f5f7ff;
+}
+
+body.light-mode .feedback-card h3{
+
+    color:#111827;
+}
+
+body.light-mode .feedback-card p{
+
+    color:#5d6475;
+}
+
+body.light-mode .feedback-form label{
+
+    color:#111827;
+}
+
+body.light-mode .feedback-form textarea{
+
+    background:#f5f7ff;
+
+    color:#111827;
+}
+
+body.light-mode .feedback-note{
+
+    color:#4b5563;
+}
+
+body.light-mode .cancel-btn{
+
+    background:#edf2ff;
+
+    color:#111827;
+}
+
+body.light-mode .close-feedback{
+
+    background:#edf2ff;
+
+    color:#111827;
+}
+
+/* ====================================
+RESPONSIVE
+==================================== */
+
+@media(max-width:768px){
+
+    .feedback-modal{
+
+        padding:26px;
+    }
+
+    .feedback-header h1{
+
+        font-size:32px;
+    }
+
+    .feedback-types{
+
+        grid-template-columns:1fr 1fr;
+    }
+
+    .feedback-form textarea{
+
+        min-height:180px;
+    }
+}
+
+@media(max-width:520px){
+
+    .feedback-modal{
+
+        width:100%;
+
+        border-radius:24px;
+
+        padding:22px;
+    }
+
+    .feedback-types{
+
+        grid-template-columns:1fr;
+    }
+
+    .feedback-header h1{
+
+        font-size:28px;
+    }
+
+    .feedback-footer{
+
+        flex-direction:column;
+
+        align-items:stretch;
+    }
+
+    .feedback-actions{
+
+        width:100%;
+    }
+
+    .cancel-btn,
+    .submit-btn{
+
+        flex:1;
+    }
+}
+
+@media(max-height:850px){
+
+    .feedback-modal{
+
+        min-height:auto;
+
+        padding:28px;
+    }
+
+    .feedback-form textarea{
+
+        min-height:160px;
+    }
+}
+
+
+/* ====================================
+ANIMATION
+==================================== */
+
+@keyframes modalFade{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(30px)
+        scale(0.96);
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0)
+        scale(1);
+    }
+}

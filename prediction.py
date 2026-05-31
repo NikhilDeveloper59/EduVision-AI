@@ -1,7 +1,3 @@
-# ============================================================
-# UPDATED prediction.py
-# ============================================================
-
 import pandas as pd
 import joblib
 import json
@@ -26,10 +22,8 @@ all_features = joblib.load(
     "all_features.pkl"
 )
 
-# ============================================================
-# DEFAULT VALUES
-# ============================================================
 
+# DEFAULT VALUES
 with open("default_feature_values.json") as f:
 
     default_values = json.load(f)
@@ -42,13 +36,60 @@ def predict_student(form_data):
 
     user_data = default_values.copy()
 
-    # ========================================================
-    # ALL FEATURES FROM WEBPAGE
-    # ========================================================
+    # ============================================================
+    # TEACHER PANEL DEFAULT VALUES
+    # ============================================================
 
-    user_data["Study_Hours"] = float(
-        form_data.get("study_hours", 0)
+    study_hours = float(
+        form_data.get("study_hours", 6)
     )
+
+    sleep_hours = float(
+        form_data.get("sleep_hours", 7)
+    )
+
+    sports_activity = float(
+        form_data.get("sports_activity", 3)
+    )
+
+    explanation_quality = float(
+        form_data.get("explanation_quality", 3)
+    )
+
+    student_interaction = float(
+        form_data.get("student_interaction", 2)
+    )
+
+    lab_facility = float(
+        form_data.get("lab_facility", 3)
+    )
+
+    teacher_support = float(
+        form_data.get("teacher_support", 3)
+    )
+
+    library_usage = float(
+        form_data.get("library_usage", 3)
+    )
+
+    exam_preparation = float(
+        form_data.get("exam_preparation", 5)
+    )
+
+    learning_hours = float(
+        form_data.get("learning_hours", 5)
+    )
+
+    project_submission = float(
+        form_data.get("project_submission", 8)
+    )
+
+    internet_access = float(
+        form_data.get("internet_access", 1)
+    )
+
+    # ALL FEATURES FROM WEBPAGE
+    user_data["Study_Hours"] = study_hours
 
     user_data["Attendance"] = float(
         form_data.get("attendance", 0)
@@ -58,25 +99,15 @@ def predict_student(form_data):
         form_data.get("previous_marks", 0)
     )
 
-    user_data["Sleep_Hours"] = float(
-        form_data.get("sleep_hours", 0)
-    )
+    user_data["Sleep_Hours"] = sleep_hours
 
-    user_data["Sports_Activity"] = float(
-        form_data.get("sports_activity", 0)
-    )
+    user_data["Sports_Activity"] = sports_activity
 
-    user_data["Explanation_Quality"] = float(
-        form_data.get("explanation_quality", 0)
-    )
+    user_data["Explanation_Quality"] = explanation_quality
 
-    user_data["Student_Interaction"] = float(
-        form_data.get("student_interaction", 0)
-    )
+    user_data["Student_Interaction"] = student_interaction
 
-    user_data["Lab_Facility"] = float(
-        form_data.get("lab_facility", 0)
-    )
+    user_data["Lab_Facility"] = lab_facility
 
     user_data["Lab_Timing"] = float(
         form_data.get("lab_timing", 0)
@@ -91,33 +122,21 @@ def predict_student(form_data):
         form_data.get("assignment_completion", 0)
     )
 
-    user_data["Teacher_Support"] = float(
-        form_data.get("teacher_support", 0)
-    )
+    user_data["Teacher_Support"] = teacher_support
 
-    user_data["Internet_Access"] = float(
-        form_data.get("internet_access", 0)
-    )
+    user_data["Internet_Access"] = internet_access
 
-    user_data["Library_Usage"] = float(
-        form_data.get("library_usage", 0)
-    )
+    user_data["Library_Usage"] = library_usage
 
     user_data["Class_Participation"] = float(
         form_data.get("class_participation", 0)
     )
 
-    user_data["Exam_Preparation"] = float(
-        form_data.get("exam_preparation", 0)
-    )
+    user_data["Exam_Preparation"] = exam_preparation
 
-    user_data["Learning_Hours"] = float(
-        form_data.get("learning_hours", 0)
-    )
+    user_data["Learning_Hours"] = learning_hours
 
-    user_data["Project_Submission"] = float(
-        form_data.get("project_submission", 0)
-    )
+    user_data["Project_Submission"] = project_submission
 
     # ========================================================
     # FEATURE ENGINEERING
@@ -169,17 +188,11 @@ def predict_student(form_data):
 
     new_data = pd.DataFrame([user_data])
 
-    print("\n=========== MODEL INPUT ===========")
-    print(new_data.T)
-    print("===================================")
-
     new_data = new_data.reindex(
         columns=all_features,
         fill_value=0
     )
 
-    print("\n================ MODEL INPUT ================")
-    print(new_data.T)
 
     # ========================================================
     # PREDICTION
@@ -198,28 +211,34 @@ def predict_student(form_data):
         2
 
     )
-
-    result_pred = pass_model.predict(
-        new_data
-    )[0]
-
     grade = grade_model.predict(
         new_data
     )[0]
 
-    # ========================================================
-    # RESULT
-    # ========================================================
+#   Assigning Grades
+    if predicted_score >= 90:
+        grade = "A+"
 
-    result = (
+    elif predicted_score >= 80:
+        grade = "A"
 
-        "PASS"
+    elif predicted_score >= 70:
+        grade = "B"
 
-        if result_pred == 1
+    elif predicted_score >= 60:
+        grade = "C"
 
-        else "FAIL"
+    elif predicted_score >= 40:
+        grade = "D"
 
-    )
+    else:
+        grade = "F"
+
+    if predicted_score >= 40:
+        result = "PASS"
+    else:
+        result = "FAIL"
+    
 
     # ========================================================
     # RISK LEVEL
@@ -333,3 +352,4 @@ def predict_student(form_data):
         weekly_plan
 
     }
+
